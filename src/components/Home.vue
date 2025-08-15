@@ -53,26 +53,51 @@
                       : 'bg-white/90 border-gray-300 text-gray-800 placeholder-gray-500 focus:border-blue-500 focus:ring-blue-500/20'
                   ]"
                   placeholder="Digite sua busca..."
-                  :disabled="isSearching"
+                  :disabled="isSearching || isReconnecting"
                 >
                 <button
                   @click="performSearch"
-                  :disabled="isSearching || !searchQuery.trim()"
+                  :disabled="isSearching || isReconnecting || !searchQuery.trim()"
                   :class="[
                     'absolute right-2 top-1/2 transform -translate-y-1/2 font-medium transition-all duration-200 rounded-full',
                     hasSearchResults 
                       ? 'px-3 py-1 text-sm' 
                       : 'px-6 py-2',
-                    isSearching || !searchQuery.trim()
+                    isSearching || isReconnecting || !searchQuery.trim()
                       ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
                       : isDarkMode
                         ? 'bg-blue-600 text-white hover:bg-blue-700 hover:scale-105'
                         : 'bg-blue-600 text-white hover:bg-blue-700 hover:scale-105'
                   ]"
                 >
-                  <span v-if="isSearching">🔍</span>
+                  <span v-if="isReconnecting">
+                    <div class="flex items-center space-x-2">
+                      <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      <span class="text-xs">Conectando...</span>
+                    </div>
+                  </span>
+                  <span v-else-if="isSearching">🔍</span>
                   <span v-else>Buscar</span>
                 </button>
+              </div>
+              
+              <!-- Indicador de Reconexão -->
+              <div v-if="isReconnecting" class="mt-3 text-center">
+                <div class="flex items-center justify-center space-x-2">
+                  <div class="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                  <span :class="[
+                    'text-sm font-medium',
+                    isDarkMode ? 'text-blue-400' : 'text-blue-600'
+                  ]">
+                    Reconectando ao servidor... ({{ reconnectionAttempts }}/{{ maxReconnectionAttempts }})
+                  </span>
+                </div>
+                <p :class="[
+                  'text-xs mt-1',
+                  isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                ]">
+                  Tentando restabelecer a conexão automaticamente
+                </p>
               </div>
             </div>
           </div>
@@ -387,6 +412,11 @@ const totalResults = ref(0)
 const resultsPerPage = ref(10)
 const sortBy = ref('relevance')
 
+// Estado para reconexão automática
+const isReconnecting = ref(false)
+const reconnectionAttempts = ref(0)
+const maxReconnectionAttempts = 3
+
 // Computed para calcular total de páginas
 const calculatedTotalPages = computed(() => {
   return Math.ceil(totalResults.value / resultsPerPage.value)
@@ -483,9 +513,6 @@ const performSearch = async () => {
   console.log('🔍 Iniciando busca por:', searchQuery.value)
   console.log('📱 P2PClient disponível:', !!p2pClient.value)
   console.log('🔌 Status da conexão:', p2pClient.value?.isConnected)
-  console.log('📝 Query value:', searchQuery.value)
-  console.log('📝 Query trimmed:', searchQuery.value.trim())
-  console.log('📝 Query length:', searchQuery.value.trim().length)
   
   const startTime = Date.now()
   isSearching.value = true
@@ -493,33 +520,85 @@ const performSearch = async () => {
   currentPage.value = 1
   
   try {
+    // Verifica se está desconectado e tenta reconectar
+    if (!p2pClient.value || !p2pClient.value.isConnected) {
+      console.log('🔌 Cliente desconectado, tentando reconectar...')
+      isReconnecting.value = true
+      reconnectionAttempts.value = 0
+      
+      // Tenta reconectar até o máximo de tentativas
+      while (reconnectionAttempts.value < maxReconnectionAttempts && (!p2pClient.value || !p2pClient.value.isConnected)) {
+        reconnectionAttempts.value++
+        console.log(`🔄 Tentativa de reconexão ${reconnectionAttempts.value}/${maxReconnectionAttempts}`)
+        
+        try {
+          // Inicializa o cliente P2P
+          p2pClient.value = new P2PClient()
+          await p2pClient.value.connect()
+          
+          // Aguarda um pouco para estabilizar a conexão
+          await new Promise(resolve => setTimeout(resolve, 1000))
+          
+          if (p2pClient.value.isConnected) {
+            console.log('✅ Reconexão bem-sucedida!')
+            break
+          }
+        } catch (error) {
+          console.error(`❌ Tentativa ${reconnectionAttempts.value} falhou:`, error)
+          
+          if (reconnectionAttempts.value < maxReconnectionAttempts) {
+            // Aguarda antes da próxima tentativa
+            await new Promise(resolve => setTimeout(resolve, 2000))
+          }
+        }
+      }
+      
+      isReconnecting.value = false
+      
+      if (!p2pClient.value || !p2pClient.value.isConnected) {
+        throw new Error(`Falha na reconexão após ${maxReconnectionAttempts} tentativas`)
+      }
+    }
+    
     if (!p2pClient.value) {
       throw new Error('P2PClient não foi inicializado')
     }
     
-    if (!p2pClient.value.isConnected) {
-      throw new Error('P2PClient não está conectado ao servidor')
-    }
+    // Configura callbacks para atualizar o status da conexão
+    p2pClient.value.setCallbacks(
+      handleResultsUpdate,
+      handleProgressUpdate,
+      handleConnectionChange
+    )
     
-    console.log(`🔍 Enviando busca para o servidor: "${searchQuery.value}"`)
-    const result = await p2pClient.value.search(searchQuery.value)
-    console.log('✅ Busca enviada com sucesso, resultado:', result)
+    // Executa a busca
+    await p2pClient.value.search(searchQuery.value.trim())
+    
+    searchTime.value = Date.now() - startTime
+    console.log('✅ Busca concluída em', searchTime.value, 'ms')
     
   } catch (error) {
     console.error('❌ Erro na busca:', error)
-    console.error('Stack trace:', error.stack)
     
-    // Mostra erro para o usuário
-    searchProgress.value = {
-      status: 'error',
-      error: error.message,
-      query: searchQuery.value
+    let errorMessage = 'Erro na busca'
+    if (error.message.includes('reconexão')) {
+      errorMessage = 'Falha na reconexão com o servidor. Tente novamente.'
+    } else if (error.message.includes('P2PClient')) {
+      errorMessage = 'Erro na inicialização do cliente. Recarregue a página.'
+    } else {
+      errorMessage = error.message || 'Erro desconhecido na busca'
     }
     
+    searchProgress.value = {
+      status: 'error',
+      error: errorMessage,
+      progress: 0,
+      query: searchQuery.value,
+      peersCount: 0,
+      peersResponded: 0
+    }
   } finally {
-    searchTime.value = Date.now() - startTime
     isSearching.value = false
-    console.log('⏱️ Tempo total da busca:', searchTime.value, 'ms')
   }
 }
 
@@ -605,22 +684,29 @@ const handleProgressUpdate = (progress) => {
 
 const handleConnectionChange = (isConnected) => {
   console.log('🔌 handleConnectionChange chamado com:', isConnected)
-  console.log(`🔌 Status da conexão: ${isConnected ? 'Conectado' : 'Desconectado'}`)
   
-  // Atualiza o status no App.vue
-  updateLocalConnectionStatus()
+  if (isReconnecting.value && isConnected) {
+    // Reconexão bem-sucedida
+    isReconnecting.value = false
+    reconnectionAttempts.value = 0
+    console.log('✅ Reconexão automática bem-sucedida!')
+  }
+  
+  updateLocalConnectionStatus(isConnected ? 'Conectado' : 'Desconectado')
+  console.log('🔌 Status da conexão:', isConnected ? 'Conectado' : 'Desconectado')
 }
 
 // Função para atualizar o status no App.vue
-const updateLocalConnectionStatus = () => {
+const updateLocalConnectionStatus = (status) => {
   if (p2pClient.value) {
-    const status = {
+    const currentStatus = {
       isConnected: p2pClient.value.isConnected,
-      currentQuery: searchProgress.value.query || ''
+      currentQuery: searchProgress.value.query || '',
+      status: status || (p2pClient.value.isConnected ? 'Conectado' : 'Desconectado')
     }
     
     // Chama a função injetada do App.vue
-    updateAppConnectionStatus(status)
+    updateAppConnectionStatus(currentStatus)
   }
 }
 
