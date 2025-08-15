@@ -64,7 +64,8 @@ class P2PClient {
       const frontendId = `frontend_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       
       // Conecta ao servidor
-      const serverUrl = `ws://localhost:3001`;
+      // const serverUrl = `ws://localhost:3001`;
+      const serverUrl = `wss://api.buscalogo.com`;
       this.serverConnection = new WebSocket(serverUrl);
       
       this.serverConnection.onopen = () => {
