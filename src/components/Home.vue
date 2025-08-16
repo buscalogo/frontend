@@ -347,8 +347,8 @@
             Digite sua busca acima para começar a explorar o conhecimento compartilhado pela comunidade.
           </p>
           <div class="space-y-3">
-            <a 
-              href="#" 
+            <router-link 
+              to="/instalar-extensao"
               :class="[
                 'inline-flex items-center px-4 py-2 rounded-lg transition-colors',
                 isDarkMode 
@@ -357,7 +357,7 @@
               ]"
             >
               📥 Instalar Extensão
-            </a>
+            </router-link>
             <p :class="[
               'text-sm',
               isDarkMode ? 'text-gray-400' : 'text-gray-500'
