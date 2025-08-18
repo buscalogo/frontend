@@ -1,158 +1,161 @@
-# 🌐 Frontend BuscaLogo - Interface Web
+# 🌐 BuscaLogo Frontend - Web Interface
 
 [![Vue.js](https://img.shields.io/badge/Vue.js-3.x-4FC08D.svg)](https://vuejs.org/)
 [![Vite](https://img.shields.io/badge/Vite-5.x-646CFF.svg)](https://vitejs.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-3.x-38B2AC.svg)](https://tailwindcss.com/)
+[![Language](https://img.shields.io/badge/language-EN-blue.svg)](README.md)
+[![Language](https://img.shields.io/badge/language-PT-blue.svg)](README_PT.md)
+[![Language](https://img.shields.io/badge/language-ES-blue.svg)](README_ES.md)
 
-> Interface web moderna e responsiva para o BuscaLogo, construída com Vue.js 3 e Tailwind CSS.
+> Modern and responsive web interface for BuscaLogo, built with Vue.js 3 and Tailwind CSS.
 
-## 🌟 Visão Geral
+## 🌟 Overview
 
-O frontend do BuscaLogo é uma aplicação Vue.js 3 que fornece uma interface elegante e intuitiva para busca colaborativa. Ele se conecta ao servidor de sinalização e permite que usuários façam buscas em dados coletados por extensões Chrome.
+The BuscaLogo frontend is a Vue.js 3 application that provides an elegant and intuitive interface for collaborative search. It connects to the signaling server and allows users to search through data collected by Chrome extensions.
 
-### ✨ Características
+### ✨ Features
 
-- 🔍 **Interface de Busca Inteligente** - Campo de busca com autocompletar
-- 📱 **Design Responsivo** - Funciona em desktop, tablet e mobile
-- 🌙 **Modo Dark/Light** - Tema adaptativo com persistência
-- ⚡ **Performance Otimizada** - Vite + Vue 3 Composition API
-- 🎨 **UI Moderna** - Tailwind CSS com componentes customizados
-- 🔄 **Tempo Real** - Atualizações em tempo real via WebSocket
+- 🔍 **Intelligent Search Interface** - Search field with autocomplete
+- 📱 **Responsive Design** - Works on desktop, tablet and mobile
+- 🌙 **Dark/Light Mode** - Adaptive theme with persistence
+- ⚡ **Optimized Performance** - Vite + Vue 3 Composition API
+- 🎨 **Modern UI** - Tailwind CSS with custom components
+- 🔄 **Real-time** - Real-time updates via WebSocket
 
-## 🚀 Início Rápido
+## 🚀 Quick Start
 
-### Pré-requisitos
+### Prerequisites
 
-- **Node.js** 18.x ou superior
-- **npm** ou **yarn**
-- **Servidor de sinalização** rodando
+- **Node.js** 18.x or higher
+- **npm** or **yarn**
+- **Signaling server** running
 
-### 1. Instalação
+### 1. Installation
 
 ```bash
 cd frontend
 npm install
 ```
 
-### 2. Configuração
+### 2. Configuration
 
-Crie um arquivo `.env.local` na pasta `frontend/`:
+Create a `.env.local` file in the `frontend/` folder:
 
 ```env
-# Configurações do Frontend
+# Frontend Configuration
 VITE_APP_NAME=BuscaLogo
 VITE_APP_VERSION=1.0.0
 
-# Servidor de Sinalização
+# Signaling Server
 VITE_WS_SERVER_URL=ws://localhost:3001
 
-# Configurações da Aplicação
+# Application Settings
 VITE_RESULTS_PER_PAGE=10
 VITE_SEARCH_TIMEOUT=30000
 ```
 
-### 3. Desenvolvimento
+### 3. Development
 
 ```bash
 npm run dev
 ```
 
-A aplicação estará disponível em `http://localhost:3000`
+The application will be available at `http://localhost:3000`
 
-### 4. Build de Produção
+### 4. Production Build
 
 ```bash
 npm run build
 npm run preview
 ```
 
-## 📁 Estrutura do Projeto
+## 📁 Project Structure
 
 ```
 frontend/
-├── 📁 public/              # Arquivos estáticos
+├── 📁 public/              # Static files
 │   ├── favicon.ico
 │   └── assets/
-├── 📁 src/                 # Código fonte
-│   ├── 📁 components/      # Componentes Vue
-│   │   ├── Home.vue        # Página principal
+├── 📁 src/                 # Source code
+│   ├── 📁 components/      # Vue components
+│   │   ├── Home.vue        # Main page
 │   │   └── ...
-│   ├── 📁 views/           # Páginas da aplicação
+│   ├── 📁 views/           # Application pages
 │   │   ├── InstalarExtensao.vue
 │   │   ├── SobreSistema.vue
 │   │   └── TermosResponsabilidade.vue
-│   ├── 📁 assets/          # Recursos estáticos
-│   │   ├── img/            # Imagens
-│   │   └── css/            # Estilos customizados
-│   ├── App.vue             # Componente raiz
-│   ├── main.js             # Ponto de entrada
-│   ├── router.js           # Configuração de rotas
-│   ├── p2p-client.js       # Cliente P2P
-│   └── style.css           # Estilos globais
-├── index.html              # HTML principal
-├── package.json            # Dependências e scripts
-├── vite.config.js          # Configuração Vite
-├── tailwind.config.js      # Configuração Tailwind
-├── postcss.config.js       # Configuração PostCSS
-└── README.md               # Este arquivo
+│   ├── 📁 assets/          # Static resources
+│   │   ├── img/            # Images
+│   │   └── css/            # Custom styles
+│   ├── App.vue             # Root component
+│   ├── main.js             # Entry point
+│   ├── router.js           # Route configuration
+│   ├── p2p-client.js       # P2P client
+│   └── style.css           # Global styles
+├── index.html              # Main HTML
+├── package.json            # Dependencies and scripts
+├── vite.config.js          # Vite configuration
+├── tailwind.config.js      # Tailwind configuration
+├── postcss.config.js       # PostCSS configuration
+└── README.md               # This file
 ```
 
-## 🛠️ Tecnologias
+## 🛠️ Technologies
 
 ### Core
-- **Vue.js 3** - Framework progressivo JavaScript
-- **Vite** - Build tool e dev server ultra-rápido
-- **Vue Router 4** - Roteamento client-side
+- **Vue.js 3** - Progressive JavaScript framework
+- **Vite** - Ultra-fast build tool and dev server
+- **Vue Router 4** - Client-side routing
 
 ### UI/UX
-- **Tailwind CSS** - Framework CSS utilitário
-- **PostCSS** - Processamento CSS avançado
-- **Autoprefixer** - Prefixos CSS automáticos
+- **Tailwind CSS** - Utility-first CSS framework
+- **PostCSS** - Advanced CSS processing
+- **Autoprefixer** - Automatic CSS prefixes
 
-### Desenvolvimento
-- **ESLint** - Linting de código
-- **Prettier** - Formatação automática
-- **Hot Module Replacement** - Recarregamento automático
+### Development
+- **ESLint** - Code linting
+- **Prettier** - Automatic formatting
+- **Hot Module Replacement** - Automatic reloading
 
-## 🔧 Scripts Disponíveis
+## 🔧 Available Scripts
 
 ```bash
-# Desenvolvimento
-npm run dev          # Servidor de desenvolvimento
-npm run build        # Build de produção
-npm run preview      # Preview do build
-npm run lint         # Verificar qualidade do código
-npm run lint:fix     # Corrigir problemas automaticamente
+# Development
+npm run dev          # Development server
+npm run build        # Production build
+npm run preview      # Build preview
+npm run lint         # Check code quality
+npm run lint:fix     # Fix problems automatically
 
-# Análise
-npm run analyze      # Analisar bundle (se configurado)
+# Analysis
+npm run analyze      # Analyze bundle (if configured)
 ```
 
-## 🎨 Sistema de Design
+## 🎨 Design System
 
-### Cores
+### Colors
 
 ```css
-/* Cores principais */
+/* Primary colors */
 --color-primary: #3B82F6;      /* Blue 500 */
 --color-secondary: #8B5CF6;     /* Violet 500 */
 --color-accent: #10B981;        /* Emerald 500 */
 
-/* Modo claro */
+/* Light mode */
 --color-bg: #FFFFFF;
 --color-text: #1F2937;
 --color-surface: #F9FAFB;
 
-/* Modo escuro */
+/* Dark mode */
 --color-bg-dark: #111827;
 --color-text-dark: #F9FAFB;
 --color-surface-dark: #1F2937;
 ```
 
-### Tipografia
+### Typography
 
 ```css
-/* Hierarquia de texto */
+/* Text hierarchy */
 --font-size-xs: 0.75rem;      /* 12px */
 --font-size-sm: 0.875rem;     /* 14px */
 --font-size-base: 1rem;       /* 16px */
@@ -163,43 +166,43 @@ npm run analyze      # Analisar bundle (se configurado)
 --font-size-4xl: 2.25rem;     /* 36px */
 ```
 
-### Componentes
+### Components
 
-O frontend utiliza um sistema de componentes baseado em:
+The frontend uses a component system based on:
 
-- **Atomic Design** - Átomos, moléculas, organismos
-- **Composition API** - Lógica reutilizável
-- **Props/Emits** - Comunicação entre componentes
-- **Slots** - Injeção de conteúdo
+- **Atomic Design** - Atoms, molecules, organisms
+- **Composition API** - Reusable logic
+- **Props/Emits** - Component communication
+- **Slots** - Content injection
 
-## 🔌 Integração com Backend
+## 🔌 Backend Integration
 
 ### WebSocket
 
 ```javascript
-// Conexão com servidor de sinalização
+// Connection to signaling server
 const ws = new WebSocket('ws://localhost:3001')
 
-// Eventos principais
-ws.onopen = () => console.log('Conectado ao servidor')
+// Main events
+ws.onopen = () => console.log('Connected to server')
 ws.onmessage = (event) => handleServerMessage(event.data)
-ws.onclose = () => console.log('Desconectado do servidor')
+ws.onclose = () => console.log('Disconnected from server')
 ```
 
 ### P2P Client
 
 ```javascript
-// Cliente P2P para comunicação com extensões
+// P2P client for communication with extensions
 import P2PClient from './p2p-client.js'
 
 const p2pClient = new P2PClient()
 await p2pClient.connect()
 
-// Busca em peers conectados
-const results = await p2pClient.search('termo de busca')
+// Search in connected peers
+const results = await p2pClient.search('search term')
 ```
 
-## 📱 Responsividade
+## 📱 Responsiveness
 
 ### Breakpoints
 
@@ -212,22 +215,22 @@ xl: 1280px   /* Extra large devices */
 2xl: 1536px  /* 2X large devices */
 ```
 
-### Estratégias
+### Strategies
 
-- **Mobile First** - Design começa no mobile
-- **Flexbox/Grid** - Layouts flexíveis e adaptativos
-- **Imagens responsivas** - Otimizadas para cada dispositivo
-- **Touch friendly** - Elementos adequados para toque
+- **Mobile First** - Design starts on mobile
+- **Flexbox/Grid** - Flexible and adaptive layouts
+- **Responsive images** - Optimized for each device
+- **Touch friendly** - Elements suitable for touch
 
-## 🌙 Modo Dark
+## 🌙 Dark Mode
 
-### Implementação
+### Implementation
 
 ```javascript
-// Estado do tema
+// Theme state
 const isDarkMode = ref(false)
 
-// Toggle do tema
+// Theme toggle
 const toggleDarkMode = () => {
   isDarkMode.value = !isDarkMode.value
   localStorage.setItem('buscalogo-theme', isDarkMode.value ? 'dark' : 'light')
@@ -240,28 +243,28 @@ const toggleDarkMode = () => {
 }
 ```
 
-### Persistência
+### Persistence
 
-- **localStorage** - Salva preferência do usuário
-- **System preference** - Detecta preferência do sistema
-- **Auto-switch** - Muda automaticamente com o sistema
+- **localStorage** - Saves user preference
+- **System preference** - Detects system preference
+- **Auto-switch** - Automatically changes with system
 
-## 🧪 Testes
+## 🧪 Testing
 
-### Estrutura de Testes
+### Test Structure
 
 ```bash
-# Instalar dependências de teste
+# Install test dependencies
 npm install --save-dev @vue/test-utils @testing-library/vue jest
 
-# Executar testes
-npm run test              # Todos os testes
-npm run test:unit         # Testes unitários
-npm run test:integration  # Testes de integração
-npm run test:coverage     # Cobertura de testes
+# Run tests
+npm run test              # All tests
+npm run test:unit         # Unit tests
+npm run test:integration  # Integration tests
+npm run test:coverage     # Test coverage
 ```
 
-### Exemplo de Teste
+### Test Example
 
 ```javascript
 import { mount } from '@vue/test-utils'
@@ -270,14 +273,14 @@ import Home from '@/components/Home.vue'
 describe('Home.vue', () => {
   it('renders search input', () => {
     const wrapper = mount(Home)
-    expect(wrapper.find('input[placeholder="Digite sua busca..."]').exists()).toBe(true)
+    expect(wrapper.find('input[placeholder="Type your search..."]').exists()).toBe(true)
   })
   
   it('performs search when enter is pressed', async () => {
     const wrapper = mount(Home)
     const input = wrapper.find('input')
     
-    await input.setValue('teste')
+    await input.setValue('test')
     await input.trigger('keyup.enter')
     
     expect(wrapper.vm.isSearching).toBe(true)
@@ -287,15 +290,15 @@ describe('Home.vue', () => {
 
 ## 📊 Performance
 
-### Otimizações
+### Optimizations
 
-- **Code Splitting** - Carregamento lazy de componentes
-- **Tree Shaking** - Remoção de código não utilizado
-- **Minificação** - Compressão de código em produção
-- **Gzip/Brotli** - Compressão de assets
-- **CDN** - Distribuição global de assets
+- **Code Splitting** - Lazy loading of components
+- **Tree Shaking** - Removal of unused code
+- **Minification** - Code compression in production
+- **Gzip/Brotli** - Asset compression
+- **CDN** - Global asset distribution
 
-### Métricas
+### Metrics
 
 ```javascript
 // Web Vitals
@@ -308,20 +311,20 @@ getLCP(console.log)
 getTTFB(console.log)
 ```
 
-## 🔒 Segurança
+## 🔒 Security
 
-### Boas Práticas
+### Best Practices
 
-- **HTTPS** - Comunicação criptografada
+- **HTTPS** - Encrypted communication
 - **CSP** - Content Security Policy
-- **XSS Protection** - Prevenção de ataques XSS
-- **CSRF Protection** - Proteção contra CSRF
-- **Input Validation** - Validação de entrada
+- **XSS Protection** - XSS attack prevention
+- **CSRF Protection** - CSRF protection
+- **Input Validation** - Input validation
 
-### Configurações
+### Configurations
 
 ```javascript
-// Vite config de segurança
+// Vite security config
 export default defineConfig({
   server: {
     https: true,
@@ -336,90 +339,98 @@ export default defineConfig({
 
 ## 🚀 Deploy
 
-### Build de Produção
+### Production Build
 
 ```bash
-# Build otimizado
+# Optimized build
 npm run build
 
-# Preview local
+# Local preview
 npm run preview
 
-# Deploy para produção
+# Deploy to production
 npm run deploy
 ```
 
-### Plataformas
+### Platforms
 
-- **Vercel** - Deploy automático do Git
-- **Netlify** - Deploy com preview
-- **GitHub Pages** - Deploy gratuito
-- **AWS S3** - Hosting estático
-- **Nginx** - Servidor próprio
+- **Vercel** - Automatic Git deployment
+- **Netlify** - Deployment with preview
+- **GitHub Pages** - Free deployment
+- **AWS S3** - Static hosting
+- **Nginx** - Own server
 
 ## 🐛 Troubleshooting
 
-### Problemas Comuns
+### Common Issues
 
-#### Build falha
+#### Build fails
 ```bash
-# Limpar cache
+# Clear cache
 rm -rf node_modules package-lock.json
 npm install
 
-# Verificar versão do Node
-node --version  # Deve ser 18+
+# Check Node version
+node --version  # Should be 18+
 ```
 
-#### Hot reload não funciona
+#### Hot reload doesn't work
 ```bash
-# Verificar configuração Vite
-# Verificar firewall/antivírus
-# Reiniciar servidor de desenvolvimento
+# Check Vite configuration
+# Check firewall/antivirus
+# Restart development server
 ```
 
-#### Estilos não carregam
+#### Styles don't load
 ```bash
-# Verificar Tailwind CSS
+# Check Tailwind CSS
 npm run build:css
 
-# Verificar PostCSS
+# Check PostCSS
 npx postcss src/style.css -o dist/style.css
 ```
 
-## 🤝 Contribuição
+## 🤝 Contributing
 
-### Diretrizes
+### Guidelines
 
-1. **Fork** o projeto
-2. **Clone** seu fork
-3. **Crie** uma branch para sua feature
-4. **Desenvolva** seguindo padrões do projeto
-5. **Teste** suas mudanças
-6. **Commit** com mensagens convencionais
-7. **Push** para sua branch
-8. **Abra** um Pull Request
+1. **Fork** the project
+2. **Clone** your fork
+3. **Create** a branch for your feature
+4. **Develop** following project standards
+5. **Test** your changes
+6. **Commit** with conventional messages
+7. **Push** to your branch
+8. **Open** a Pull Request
 
-### Padrões de Código
+### Code Standards
 
-- **ESLint** - Regras de qualidade
-- **Prettier** - Formatação automática
-- **Vue Style Guide** - Padrões Vue.js
-- **Conventional Commits** - Mensagens de commit
+- **ESLint** - Code quality rules
+- **Prettier** - Automatic formatting
+- **Vue Style Guide** - Vue.js standards
+- **Conventional Commits** - Commit messages
 
-## 📚 Recursos Adicionais
+## 📚 Additional Resources
 
 - **[Vue.js 3 Documentation](https://vuejs.org/)**
 - **[Vite Documentation](https://vitejs.dev/)**
 - **[Tailwind CSS Documentation](https://tailwindcss.com/)**
 - **[Vue Router Documentation](https://router.vuejs.org/)**
 
-## 📞 Suporte
+## 📞 Support
 
 - **Issues**: [GitHub Issues](https://github.com/buscalogo/buscalogo.com/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/buscalogo/buscalogo.com/discussions)
 - **Email**: contato@buscalogo.com
 
+## 🌍 Internationalization
+
+This project is available in multiple languages:
+
+- 🇺🇸 **English** (Primary) - [README.md](README.md)
+- 🇧🇷 **Portuguese** - [README_PT.md](README_PT.md)
+- 🇪🇸 **Spanish** - [README_ES.md](README_ES.md)
+
 ---
 
-**🚀 O frontend do BuscaLogo oferece uma experiência de busca moderna e intuitiva!**
+**🚀 The BuscaLogo frontend offers a modern and intuitive search experience!**
