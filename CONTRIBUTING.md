@@ -354,6 +354,7 @@ locales/
 ### **Canais de Comunicação**
 
 - **Discord**: [https://discord.gg/AJjDJUc8bn](https://discord.gg/AJjDJUc8bn)
+- **Telegram**: [https://t.me/buscalogo](https://t.me/buscalogo)
 - **GitHub Issues**: Para bugs e features
 - **GitHub Discussions**: Para discussões gerais
 - **Email**: contato@buscalogo.com
