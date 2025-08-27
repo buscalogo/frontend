@@ -22,6 +22,54 @@ The BuscaLogo frontend is a Vue.js 3 application that provides an elegant and in
 - 🎨 **Modern UI** - Tailwind CSS with custom components
 - 🔄 **Real-time** - Real-time updates via WebSocket
 
+## 🖥️ BuscaLogo Desktop
+
+In addition to the web interface, BuscaLogo offers a powerful desktop application that provides enhanced scraping capabilities and offline functionality.
+
+### 🚀 Latest Release: v1.1.9
+
+#### 📦 Downloads
+
+**Linux**
+- **AppImage (64-bit)**: [BuscaLogo-1.1.0.AppImage](https://github.com/buscalogo/desktop-app/releases/download/v1.1.9/BuscaLogo-1.1.0.AppImage)
+
+**Windows**
+- **Installer (64-bit)**: [BuscaLogo-1.1.0.exe](https://github.com/buscalogo/desktop-app/releases/download/v1.1.9/BuscaLogo-1.1.0.exe)
+
+**macOS**
+- **DMG (Intel + Apple Silicon)**: [BuscaLogo-1.1.0.dmg](https://github.com/buscalogo/desktop-app/releases/download/v1.1.9/BuscaLogo-1.1.0.dmg)
+
+#### 🔧 Installation
+
+**Linux**
+```bash
+chmod +x BuscaLogo-1.1.0.AppImage
+./BuscaLogo-1.1.0.AppImage
+```
+
+**Windows**
+Execute the `.exe` file and follow the installer instructions.
+
+**macOS**
+Open the `.dmg` file and drag BuscaLogo to the Applications folder.
+
+#### ✨ Desktop Features
+
+- 🕷️ **Advanced Web Scraping** - More powerful than browser extensions
+- 💾 **Offline Mode** - Work without internet connection
+- 🔍 **Enhanced Search** - Advanced filtering and analysis tools
+- 📊 **Data Export** - Export results in multiple formats
+- 🚀 **Performance** - Native application performance
+- 🔒 **Privacy** - Local data processing
+
+#### 📋 Changelog & Support
+
+- **Full Changelog**: [CHANGELOG.md](https://github.com/buscalogo/desktop-app/blob/main/CHANGELOG.md)
+- **Report Issues**: [GitHub Issues](https://github.com/buscalogo/desktop-app/issues)
+- **Contributing**: [CONTRIBUTING.md](https://github.com/buscalogo/desktop-app/blob/main/CONTRIBUTING.md)
+
+---
+
 ## 🚀 Quick Start
 
 ### Prerequisites

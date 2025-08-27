@@ -435,3 +435,51 @@ Este projeto está disponível em múltiplos idiomas:
 ---
 
 **🚀 O frontend do BuscaLogo oferece uma experiência de busca moderna e intuitiva!**
+
+## 🖥️ BuscaLogo Desktop
+
+Além da interface web, o BuscaLogo oferece um poderoso aplicativo desktop que fornece capacidades avançadas de scraping e funcionalidade offline.
+
+### 🚀 Última Versão: v1.1.9
+
+#### 📦 Downloads
+
+**Linux**
+- **AppImage (64-bit)**: [BuscaLogo-1.1.0.AppImage](https://github.com/buscalogo/desktop-app/releases/download/v1.1.9/BuscaLogo-1.1.0.AppImage)
+
+**Windows**
+- **Instalador (64-bit)**: [BuscaLogo-1.1.0.exe](https://github.com/buscalogo/desktop-app/releases/download/v1.1.9/BuscaLogo-1.1.0.exe)
+
+**macOS**
+- **DMG (Intel + Apple Silicon)**: [BuscaLogo-1.1.0.dmg](https://github.com/buscalogo/desktop-app/releases/download/v1.1.9/BuscaLogo-1.1.0.dmg)
+
+#### 🔧 Instalação
+
+**Linux**
+```bash
+chmod +x BuscaLogo-1.1.0.AppImage
+./BuscaLogo-1.1.0.AppImage
+```
+
+**Windows**
+Execute o arquivo `.exe` e siga as instruções do instalador.
+
+**macOS**
+Abra o arquivo `.dmg` e arraste o BuscaLogo para a pasta Applications.
+
+#### ✨ Funcionalidades do Desktop
+
+- 🕷️ **Scraping Web Avançado** - Mais poderoso que extensões de navegador
+- 💾 **Modo Offline** - Trabalhe sem conexão com a internet
+- 🔍 **Busca Aprimorada** - Ferramentas avançadas de filtragem e análise
+- 📊 **Exportação de Dados** - Exporte resultados em múltiplos formatos
+- 🚀 **Performance** - Performance de aplicativo nativo
+- 🔒 **Privacidade** - Processamento de dados local
+
+#### 📋 Changelog e Suporte
+
+- **Changelog Completo**: [CHANGELOG.md](https://github.com/buscalogo/desktop-app/blob/main/CHANGELOG.md)
+- **Reportar Problemas**: [GitHub Issues](https://github.com/buscalogo/desktop-app/issues)
+- **Contribuir**: [CONTRIBUTING.md](https://github.com/buscalogo/desktop-app/blob/main/CONTRIBUTING.md)
+
+---

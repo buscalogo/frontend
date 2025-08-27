@@ -16,11 +16,59 @@ El frontend de BuscaLogo es una aplicación Vue.js 3 que proporciona una interfa
 ### ✨ Características
 
 - 🔍 **Interfaz de Búsqueda Inteligente** - Campo de búsqueda con autocompletado
-- 📱 **Diseño Responsivo** - Funciona en desktop, tablet y móvil
-- 🌙 **Modo Dark/Light** - Tema adaptativo con persistencia
+- 📱 **Diseño Responsivo** - Funciona en desktop, tablet y mobile
+- 🌙 **Modo Oscuro/Claro** - Tema adaptativo con persistencia
 - ⚡ **Rendimiento Optimizado** - Vite + Vue 3 Composition API
 - 🎨 **UI Moderna** - Tailwind CSS con componentes personalizados
 - 🔄 **Tiempo Real** - Actualizaciones en tiempo real vía WebSocket
+
+## 🖥️ BuscaLogo Desktop
+
+Además de la interfaz web, BuscaLogo ofrece una potente aplicación de escritorio que proporciona capacidades avanzadas de scraping y funcionalidad offline.
+
+### 🚀 Última Versión: v1.1.9
+
+#### 📦 Descargas
+
+**Linux**
+- **AppImage (64-bit)**: [BuscaLogo-1.1.0.AppImage](https://github.com/buscalogo/desktop-app/releases/download/v1.1.9/BuscaLogo-1.1.0.AppImage)
+
+**Windows**
+- **Instalador (64-bit)**: [BuscaLogo-1.1.0.exe](https://github.com/buscalogo/desktop-app/releases/download/v1.1.9/BuscaLogo-1.1.0.exe)
+
+**macOS**
+- **DMG (Intel + Apple Silicon)**: [BuscaLogo-1.1.0.dmg](https://github.com/buscalogo/desktop-app/releases/download/v1.1.9/BuscaLogo-1.1.0.dmg)
+
+#### 🔧 Instalación
+
+**Linux**
+```bash
+chmod +x BuscaLogo-1.1.0.AppImage
+./BuscaLogo-1.1.0.AppImage
+```
+
+**Windows**
+Ejecuta el archivo `.exe` y sigue las instrucciones del instalador.
+
+**macOS**
+Abre el archivo `.dmg` y arrastra BuscaLogo a la carpeta Applications.
+
+#### ✨ Características del Desktop
+
+- 🕷️ **Scraping Web Avanzado** - Más potente que extensiones de navegador
+- 💾 **Modo Offline** - Trabaja sin conexión a internet
+- 🔍 **Búsqueda Mejorada** - Herramientas avanzadas de filtrado y análisis
+- 📊 **Exportación de Datos** - Exporta resultados en múltiples formatos
+- 🚀 **Rendimiento** - Rendimiento de aplicación nativa
+- 🔒 **Privacidad** - Procesamiento de datos local
+
+#### 📋 Changelog y Soporte
+
+- **Changelog Completo**: [CHANGELOG.md](https://github.com/buscalogo/desktop-app/blob/main/CHANGELOG.md)
+- **Reportar Problemas**: [GitHub Issues](https://github.com/buscalogo/desktop-app/issues)
+- **Contribuir**: [CONTRIBUTING.md](https://github.com/buscalogo/desktop-app/blob/main/CONTRIBUTING.md)
+
+---
 
 ## 🚀 Inicio Rápido
 
