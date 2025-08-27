@@ -422,6 +422,7 @@ npx postcss src/style.css -o dist/style.css
 - **Issues**: [GitHub Issues](https://github.com/buscalogo/buscalogo.com/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/buscalogo/buscalogo.com/discussions)
 - **Email**: contato@buscalogo.com
+- **Comunidade**: [Discord](https://discord.gg/AJjDJUc8bn)
 
 ## 🌍 Internacionalização
 
