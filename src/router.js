@@ -4,6 +4,7 @@ import TermosResponsabilidade from './views/TermosResponsabilidade.vue'
 import SobreSistema from './views/SobreSistema.vue'
 import InstalarExtensao from './views/InstalarExtensao.vue'
 import Roadmap from './views/Roadmap.vue'
+import PoliticaPrivacidade from './views/PoliticaPrivacidade.vue'
 
 const routes = [
   {
@@ -30,6 +31,11 @@ const routes = [
     path: '/roadmap',
     name: 'Roadmap',
     component: Roadmap
+  },
+  {
+    path: '/privacidade',
+    name: 'PoliticaPrivacidade',
+    component: PoliticaPrivacidade
   }
 ]
 

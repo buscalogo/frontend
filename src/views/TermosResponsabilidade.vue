@@ -80,7 +80,7 @@
               <p class="text-sm" :class="isDarkMode ? 'text-gray-300' : 'text-gray-600'">
                 Coletamos apenas dados mínimos necessários para o funcionamento da plataforma. 
                 Para informações detalhadas sobre coleta, uso e proteção de dados, 
-                consulte nossa <a href="/privacidade" class="text-blue-600 hover:underline">Política de Privacidade</a>.
+                consulte nossa <router-link to="/privacidade" class="text-blue-600 hover:underline">Política de Privacidade</router-link>.
               </p>
             </div>
             
