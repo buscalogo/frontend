@@ -21,6 +21,12 @@
             Ao utilizar a plataforma BuscaLogo (site, aplicação desktop ou extensão), você concorda com estes termos de responsabilidade. 
             Se não concordar com qualquer parte destes termos, não deve usar nossa plataforma.
           </p>
+          <div class="mt-4 p-4 rounded-lg border border-green-200 bg-green-50 dark:bg-green-900/20 dark:border-green-700">
+            <p class="text-sm" :class="isDarkMode ? 'text-green-300' : 'text-green-700'">
+              <strong>Privacidade:</strong> O BuscaLogo não coleta dados pessoais identificáveis dos usuários. 
+              Não há necessidade de cadastro e não utilizamos cookies de rastreamento.
+            </p>
+          </div>
           <div class="mt-4 p-4 rounded-lg border border-blue-200 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-700">
             <p class="text-sm" :class="isDarkMode ? 'text-blue-300' : 'text-blue-700'">
               <strong>Importante:</strong> Estes termos são regidos pela legislação brasileira e o foro eleito é o da comarca de Fortaleza/CE.
@@ -85,13 +91,29 @@
             </div>
             
             <div class="p-4 rounded-lg border" :class="isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'">
-              <h3 class="text-lg font-medium mb-2 text-amber-600">Canal de Denúncias</h3>
+              <h3 class="text-lg font-medium mb-2 text-amber-600">Sistema de Denúncia</h3>
               <p class="text-sm" :class="isDarkMode ? 'text-gray-300' : 'text-gray-600'">
-                Para reportar comportamentos suspeitos, violações de direitos autorais ou 
-                conteúdo inadequado, utilize nosso canal dedicado: 
-                <a href="mailto:abuso@buscalogo.com" class="text-blue-600 hover:underline">abuso@buscalogo.com</a>
+                Cada link da plataforma pode ser reportado pelos usuários através de botões de denúncia. 
+                Para fins de moderação, apenas <strong>IP, data e hora</strong> do usuário que realiza a denúncia 
+                são coletados, e esses dados são <strong>criptografados</strong>, garantindo que ninguém além 
+                do BuscaLogo consiga acessá-los. Nenhum dado pessoal ou sensível é coletado.
               </p>
             </div>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-2xl font-semibold mb-4" :class="isDarkMode ? 'text-gray-200' : 'text-gray-700'">
+            🔮 Futuro Cadastro Local
+          </h2>
+          <div class="p-4 rounded-lg border border-purple-200 bg-purple-50 dark:bg-purple-900/20 dark:border-purple-700">
+            <h3 class="text-lg font-medium mb-2 text-purple-700 dark:text-purple-300">Armazenamento Local</h3>
+            <p class="text-sm" :class="isDarkMode ? 'text-purple-300' : 'text-purple-700'">
+              Em versões futuras, caso o recurso de cadastro seja habilitado, todos os dados do usuário 
+              (como histórico, favoritos e preferências) ficarão armazenados <strong>apenas no dispositivo 
+              do usuário (local storage)</strong>. O servidor do BuscaLogo não terá acesso a esses dados, 
+              garantindo máxima privacidade e controle do usuário sobre suas informações.
+            </p>
           </div>
         </section>
 
@@ -224,7 +246,7 @@
           </p>
           <div class="mt-4 p-4 rounded-lg border border-yellow-200 bg-yellow-50 dark:bg-yellow-900/20 dark:border-yellow-700">
             <p class="text-sm" :class="isDarkMode ? 'text-yellow-300' : 'text-yellow-700'">
-              <strong>Última atualização:</strong> 27 de agosto de 2025 - Versão 2.0
+              <strong>Última atualização:</strong> 27 de agosto de 2025 - Versão 3.0
             </p>
           </div>
         </section>
