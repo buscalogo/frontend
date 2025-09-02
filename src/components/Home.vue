@@ -161,7 +161,7 @@
       <!-- Resultados da Busca -->
       <div v-if="searchResults.length > 0" class="max-w-4xl mx-auto">
         <!-- Estatísticas (Compactas quando há resultados) -->
-        <div class="mb-4 text-center">
+        <div class="mb-4 text-left">
           <p :class="[
             'text-base',
             isDarkMode ? 'text-gray-300' : 'text-gray-600'
@@ -172,15 +172,12 @@
         </div>
 
         <!-- Lista de Resultados -->
-        <div class="space-y-3">
+        <div class="divide-y divide-gray-200 dark:divide-gray-700">
           <div 
             v-for="result in paginatedResults" 
             :key="result.id"
             :class="[
-              'p-4 rounded-lg border transition-all duration-200 hover:shadow-lg',
-              isDarkMode 
-                ? 'bg-gray-800 border-gray-700 hover:border-gray-600' 
-                : 'bg-white border-gray-200 hover:border-gray-300'
+              'py-4'
             ]"
           >
             <!-- Cabeçalho do Resultado -->
@@ -208,14 +205,16 @@
               
               <!-- Título e URL -->
               <div class="flex-1 min-w-0">
-                <h3 class="text-lg font-medium mb-1">
+                <h3 class="text-xl font-normal leading-6 mb-1">
                   <a 
                     :href="result.url" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     :class="[
                       'hover:underline transition-colors',
-                      isDarkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-700'
+                      isDarkMode 
+                        ? 'text-blue-400 visited:text-purple-400 hover:text-blue-300' 
+                        : 'text-blue-700 visited:text-purple-700 hover:text-blue-800'
                     ]"
                   >
                     {{ result.title }}
@@ -223,7 +222,7 @@
                 </h3>
                 <p :class="[
                   'text-sm truncate',
-                  isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                  isDarkMode ? 'text-green-400' : 'text-green-700'
                 ]">
                   {{ result.url }}
                 </p>
@@ -231,8 +230,8 @@
               
               <!-- Score -->
               <div :class="[
-                'px-2 py-1 rounded text-xs font-medium',
-                isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'
+                'text-xs font-normal whitespace-nowrap',
+                isDarkMode ? 'text-gray-400' : 'text-gray-500'
               ]">
                 {{ result.score }} pts
               </div>
@@ -249,22 +248,19 @@
             <!-- Metadados -->
             <div class="flex flex-wrap items-center gap-2 text-xs">
               <span :class="[
-                'px-2 py-1 rounded',
-                isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'
+                isDarkMode ? 'text-gray-400' : 'text-gray-500'
               ]">
                 📅 {{ formatDate(result.timestamp) }}
               </span>
               
               <span v-if="result.headings?.length" :class="[
-                'px-2 py-1 rounded',
-                isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'
+                isDarkMode ? 'text-gray-400' : 'text-gray-500'
               ]">
                 📝 {{ result.headings.length }} headings
               </span>
               
               <span v-if="result.topics?.length" :class="[
-                'px-2 py-1 rounded',
-                isDarkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-600'
+                isDarkMode ? 'text-gray-400' : 'text-gray-500'
               ]">
                 🏷️ {{ result.topics.join(', ') }}
               </span>
