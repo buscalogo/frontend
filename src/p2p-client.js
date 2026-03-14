@@ -64,8 +64,8 @@ class P2PClient {
       const frontendId = `frontend_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       
       // Conecta ao servidor
-      // const serverUrl = `ws://localhost:3001`;
-      const serverUrl = `wss://api.buscalogo.com`;
+      const serverUrl = `ws://localhost:3001`;
+      // const serverUrl = `wss://api.buscalogo.com`;
       this.serverConnection = new WebSocket(serverUrl);
       
       this.serverConnection.onopen = () => {
@@ -429,17 +429,18 @@ class P2PClient {
         }
       });
       
-      // Ordena por relevância (score)
+      // Ordena por relevância (relevance ou score)
       uniqueResults.sort((a, b) => {
-        const scoreA = a.score || 0;
-        const scoreB = b.score || 0;
-        
+        const scoreA = a.relevance ?? a.score ?? 0;
+        const scoreB = b.relevance ?? b.score ?? 0;
+
         if (scoreB !== scoreA) {
           return scoreB - scoreA;
         }
-        
-        // Em caso de empate, ordena por timestamp (mais recente primeiro)
-        return (b.timestamp || 0) - (a.timestamp || 0);
+
+        const tsA = a.metadata?.scrapedAt || a.timestamp || 0;
+        const tsB = b.metadata?.scrapedAt || b.timestamp || 0;
+        return new Date(tsB) - new Date(tsA);
       });
       
       return uniqueResults;

@@ -1,35 +1,41 @@
 <template>
   <div :class="[
     'min-h-screen transition-colors duration-300 flex flex-col',
-    isDarkMode ? 'bg-gray-900 text-gray-100' : 'bg-gradient-to-br from-blue-50 to-indigo-100 text-gray-800'
+    isDarkMode ? 'bg-[#0f0f0f] text-gray-100' : 'bg-[#fafafa] text-gray-800'
   ]">
-    <!-- Header -->
+    <!-- Header (fixo ao rolar) -->
     <header :class="[
-      'border-b transition-colors duration-300 flex-shrink-0',
-      isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+      'sticky top-0 z-50 transition-colors duration-300 flex-shrink-0',
+      isDarkMode ? 'bg-[#0f0f0f]/95 backdrop-blur-md' : 'bg-[#fafafa]/95 backdrop-blur-md'
     ]">
       <div class="container mx-auto px-4 py-2">
-        <div class="flex items-center justify-between">
-          <!-- Logo e Nome -->
-          <router-link to="/" class="flex items-center space-x-2">
+        <div class="flex items-center gap-4 w-full">
+          <!-- Logo e Nome (clique limpa resultados e volta à página inicial) -->
+          <router-link
+            to="/"
+            class="flex items-center space-x-2 flex-shrink-0"
+            @click="handleLogoClick"
+          >
             <img src="./assets/img/dark-logo.png" alt="BuscaLogo" class="w-6 h-6 rounded-lg shadow-sm">
             <div>
               <h1 class="text-lg font-bold">BuscaLogo</h1>
               <p class="text-xs text-gray-500">Buscador P2P</p>
             </div>
           </router-link>
+          <!-- Slot para barra de busca (quando há resultados, via Teleport) -->
+          <div id="header-search-slot" class="flex-1 min-w-0 flex items-center"></div>
           
           <!-- Navegação e Status -->
-          <div class="flex items-center space-x-4">
+          <div class="flex items-center space-x-4 flex-shrink-0">
             <!-- Botão Voltar à Busca (condicional) -->
             <router-link 
               v-if="!isHomePage" 
               to="/" 
               :class="[
-                'px-2 py-1 rounded text-sm font-medium transition-colors',
+                'px-3 py-1.5 rounded-full text-sm font-medium transition-colors',
                 isDarkMode 
-                  ? 'bg-gray-700 text-gray-200 hover:bg-gray-600' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white' 
+                  : 'bg-black/5 text-gray-600 hover:bg-black/10 hover:text-black'
               ]"
             >
               ← Voltar à Busca
@@ -39,10 +45,10 @@
             <button
               @click="toggleDarkMode"
               :class="[
-                'p-1.5 rounded transition-all duration-200 hover:scale-105',
+                'p-2 rounded-full transition-all duration-200 active:scale-95',
                 isDarkMode 
-                  ? 'bg-yellow-500 text-gray-900 hover:bg-yellow-400' 
-                  : 'bg-gray-800 text-white hover:bg-gray-700'
+                  ? 'text-gray-400 hover:text-white hover:bg-white/10' 
+                  : 'text-gray-500 hover:text-black hover:bg-black/5'
               ]"
               :title="isDarkMode ? 'Mudar para modo claro' : 'Mudar para modo escuro'"
             >
@@ -79,8 +85,8 @@
 
     <!-- Footer -->
     <footer :class="[
-      'border-t transition-colors duration-300 flex-shrink-0 mt-auto',
-      isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+      'transition-colors duration-300 flex-shrink-0 mt-auto',
+      isDarkMode ? 'bg-[#0f0f0f]' : 'bg-[#fafafa]'
     ]">
       <div class="container mx-auto px-4 py-3">
         <div class="flex flex-col md:flex-row items-center justify-between space-y-2 md:space-y-0">
@@ -231,9 +237,15 @@ onMounted(() => {
   })
 })
 
-// Fornece o tema e função de atualização para componentes filhos
+// Callback para reset da Home (limpar resultados ao clicar no logo)
+const resetHomeRef = ref(null)
+provide('resetHome', resetHomeRef)
 provide('isDarkMode', isDarkMode)
 provide('updateAppConnectionStatus', updateConnectionStatus)
+
+const handleLogoClick = () => {
+  resetHomeRef.value?.()
+}
 </script>
 
 <style scoped>

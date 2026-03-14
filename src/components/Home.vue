@@ -1,32 +1,82 @@
 <template>
-  <div class="flex-1 flex flex-col">
-    <!-- Campo de Busca (Dinâmico) -->
+  <div class="flex-1 flex flex-col relative w-full">
+    <!-- Barra de Progresso (Absoluta no topo) -->
+    <div v-if="isSearching || (searchProgress.status && searchProgress.status !== 'idle')" class="absolute top-0 left-0 w-full z-50">
+      <div class="h-[2px] w-full bg-transparent overflow-hidden">
+        <div 
+            :class="[
+            'h-full transition-all duration-300 ease-out',
+            searchProgress.status === 'error' ? 'bg-red-500' : 'bg-transparent'
+          ]"
+          :style="{ width: searchProgress.progress + '%' }"
+        ></div>
+      </div>
+    </div>
+
+    <!-- Campo de Busca: Teleport para header quando há resultados -->
+    <Teleport v-if="hasEverHadSearchResults" to="#header-search-slot">
+      <div class="w-full max-w-xl mx-auto">
+        <div class="relative w-full shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:shadow-[0_8px_30px_rgb(255,255,255,0.03)] rounded-full">
+          <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <svg class="h-4 w-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <input
+            v-model="searchQuery"
+            @keyup.enter="performSearch"
+            :class="[
+              'w-full border-0 pl-10 pr-10 py-2 text-sm rounded-full focus:outline-none focus:ring-1',
+              isDarkMode 
+                ? 'bg-[#1a1a1a] text-gray-100 placeholder-gray-500 focus:ring-gray-600' 
+                : 'bg-white text-gray-900 placeholder-gray-400 focus:ring-gray-300'
+            ]"
+            placeholder="Pesquise na rede P2P..."
+            :disabled="isSearching || isReconnecting"
+          >
+          <button
+            type="button"
+            @click="performSearch"
+            :disabled="isSearching || isReconnecting || !searchQuery.trim()"
+            :class="[
+              'absolute right-1.5 top-1/2 -translate-y-1/2 rounded-full p-1.5 transition-all duration-200',
+              isSearching || isReconnecting || !searchQuery.trim()
+                ? 'opacity-50 cursor-not-allowed'
+                : 'opacity-90 hover:opacity-100',
+              isDarkMode ? 'text-gray-400 hover:text-gray-300' : 'text-gray-500 hover:text-gray-700'
+            ]"
+            title="Buscar"
+          >
+            <span v-if="isSearching || isReconnecting" class="block w-3.5 h-3.5 border border-current border-t-transparent rounded-full animate-spin"></span>
+            <svg v-else class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </Teleport>
+
+    <!-- Campo de Busca (estado inicial - antes da primeira busca) -->
     <div 
-      class="sticky top-0 z-10 transition-all duration-300 backdrop-blur-sm" 
-      :class="[
-        isDarkMode ? 'bg-gray-900/80' : 'bg-white/80',
-        hasSearchResults ? 'py-2' : 'py-6'
-      ]"
+      v-if="!hasEverHadSearchResults"
+      class="transition-all duration-500 ease-in-out flex flex-col w-full py-0 min-h-[60vh] justify-center"
     >
       <div class="container mx-auto px-4">
         <div class="max-w-4xl mx-auto">
-          <!-- Logo e Título (Só aparecem quando não há resultados) -->
-          <div v-if="!hasSearchResults" class="text-center mb-6">
-            <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
-              <img src="@/assets/img/dark-logo.png" alt="BuscaLogo" class="w-8 h-8">
-            </div>
+          <!-- Logo e Título -->
+          <div class="text-center mb-10">
             <h1 
               :class="[
-                'text-3xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent',
-                isDarkMode ? 'from-blue-400 to-purple-400' : 'from-blue-600 to-purple-600'
+                'text-5xl md:text-7xl font-bold tracking-tight mb-3',
+                isDarkMode ? 'text-gray-100' : 'text-gray-900'
               ]"
             >
               BuscaLogo
             </h1>
             <p 
               :class="[
-                'text-sm',
-                isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                'text-base md:text-lg',
+                isDarkMode ? 'text-gray-400' : 'text-gray-500'
               ]"
             >
               Buscador colaborativo P2P
@@ -39,45 +89,43 @@
               class="relative" 
               :class="hasSearchResults ? 'w-full max-w-lg' : 'w-full max-w-2xl'"
             >
-              <div class="relative">
+              <div class="relative w-full shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:shadow-[0_8px_30px_rgb(255,255,255,0.03)] rounded-full">
+                <!-- Ícone de Busca interno -->
+                <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                  <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                  </svg>
+                </div>
                 <input
                   v-model="searchQuery"
                   @keyup.enter="performSearch"
                   :class="[
-                    'w-full border transition-all duration-200 focus:outline-none focus:ring-2 shadow-sm rounded-full',
-                    hasSearchResults 
-                      ? 'px-4 py-2 text-base' 
-                      : 'px-6 py-4 text-lg',
+                    'w-full border-0 transition-all duration-200 focus:outline-none focus:ring-1 rounded-full',
+                    'pl-12 pr-12 py-4 text-lg',
                     isDarkMode 
-                      ? 'bg-gray-800/90 border-gray-600 text-white placeholder-gray-400 focus:border-blue-400 focus:ring-blue-400/20' 
-                      : 'bg-white/90 border-gray-300 text-gray-800 placeholder-gray-500 focus:border-blue-500 focus:ring-blue-500/20'
+                      ? 'bg-[#1a1a1a] text-gray-100 placeholder-gray-500 focus:ring-gray-600' 
+                      : 'bg-white text-gray-900 placeholder-gray-400 focus:ring-gray-300'
                   ]"
-                  placeholder="Digite sua busca..."
+                  placeholder="Pesquise na rede P2P..."
                   :disabled="isSearching || isReconnecting"
                 >
                 <button
+                  type="button"
                   @click="performSearch"
                   :disabled="isSearching || isReconnecting || !searchQuery.trim()"
                   :class="[
-                    'absolute right-2 top-1/2 transform -translate-y-1/2 font-medium transition-all duration-200 rounded-full',
-                    hasSearchResults 
-                      ? 'px-3 py-1 text-sm' 
-                      : 'px-6 py-2',
+                    'absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-2 transition-all duration-200',
                     isSearching || isReconnecting || !searchQuery.trim()
-                      ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-                      : isDarkMode
-                        ? 'bg-blue-600 text-white hover:bg-blue-700 hover:scale-105'
-                        : 'bg-blue-600 text-white hover:bg-blue-700 hover:scale-105'
+                      ? 'opacity-50 cursor-not-allowed'
+                      : 'opacity-90 hover:opacity-100',
+                    isDarkMode ? 'text-gray-400 hover:text-gray-300' : 'text-gray-500 hover:text-gray-700'
                   ]"
+                  title="Buscar"
                 >
-                  <span v-if="isReconnecting">
-                    <div class="flex items-center space-x-2">
-                      <div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      <span class="text-xs">Conectando...</span>
-                    </div>
-                  </span>
-                  <span v-else-if="isSearching">🔍</span>
-                  <span v-else>Buscar</span>
+                  <span v-if="isReconnecting || isSearching" class="block w-4 h-4 border border-current border-t-transparent rounded-full animate-spin"></span>
+                  <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
                 </button>
               </div>
               
@@ -105,171 +153,149 @@
       </div>
     </div>
 
-    <!-- Conteúdo Principal -->
     <div 
       class="flex-1 container mx-auto px-4" 
-      :class="hasSearchResults ? 'py-4' : 'py-6'"
+      :class="hasEverHadSearchResults ? 'py-4' : 'py-6'"
     >
-      <!-- Barra de Progresso -->
-      <div v-if="isSearching || (searchProgress.status && searchProgress.status !== 'idle')" class="max-w-4xl mx-auto mb-4">
-        <div :class="[
-          'bg-gray-200 rounded-full h-2 overflow-hidden',
-          isDarkMode ? 'bg-gray-700' : 'bg-gray-200'
+      <!-- Status da Busca (primeira vez, sem resultados ainda) -->
+      <div v-if="(isSearching || (searchProgress.status && searchProgress.status !== 'idle')) && !hasEverHadSearchResults" class="max-w-4xl mx-auto text-center mt-6">
+        <p :class="[
+          'text-sm font-medium flex items-center justify-center gap-2',
+          isDarkMode ? 'text-gray-400' : 'text-gray-500'
         ]">
-          <div 
-            :class="[
-              'h-full transition-all duration-300 ease-out',
-              searchProgress.status === 'error' 
-                ? 'bg-red-500' 
-                : 'bg-gradient-to-r from-blue-500 to-purple-500'
-            ]"
-            :style="{ width: searchProgress.progress + '%' }"
-          ></div>
-        </div>
-        
-        <!-- Status da Busca -->
-        <div class="mt-2 text-center">
-          <p :class="[
-            'text-sm font-medium',
-            isDarkMode ? 'text-gray-300' : 'text-gray-600'
-          ]">
-            {{ progressText }}
-          </p>
-          
-          <!-- Estatísticas dos Peers -->
-          <div v-if="searchProgress.peersCount > 0" class="mt-1">
-            <p :class="[
-              'text-xs',
-              isDarkMode ? 'text-gray-400' : 'text-gray-500'
-            ]">
-              {{ searchProgress.peersResponded || 0 }}/{{ searchProgress.peersCount }} peers
-            </p>
-          </div>
-          
-          <!-- Status Específico -->
-          <div v-if="searchProgress.status === 'started' || searchProgress.status === 'progress'" class="mt-1">
-            <p :class="[
-              'text-sm',
-              isDarkMode ? 'text-gray-300' : 'text-gray-600'
-            ]">
-              Buscando em {{ searchProgress.peersCount }} peers... {{ searchProgress.progress }}%
-            </p>
-          </div>
-        </div>
+          <span class="loading-dots" :class="[isDarkMode ? 'text-blue-400' : 'text-blue-500']">
+            <span></span><span></span><span></span>
+          </span>
+          {{ progressText }}
+          <span v-if="searchProgress.peersCount > 0" class="opacity-75 relative bottom-[0.5px] ml-2 font-normal text-xs">
+            {{ searchProgress.peersResponded || 0 }}/{{ searchProgress.peersCount }} peers 
+            <span v-if="searchProgress.progress">({{ searchProgress.progress }}%)</span>
+          </span>
+        </p>
       </div>
 
       <!-- Resultados da Busca -->
       <div v-if="searchResults.length > 0" class="max-w-4xl mx-auto">
-        <!-- Estatísticas (Compactas quando há resultados) -->
-        <div class="mb-4 text-left">
+        <!-- Barra de ferramentas -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
           <p :class="[
-            'text-base',
-            isDarkMode ? 'text-gray-300' : 'text-gray-600'
+            'text-sm',
+            isDarkMode ? 'text-gray-400' : 'text-gray-500'
           ]">
-            {{ totalResults }} resultados encontrados
-            <span v-if="searchTime > 0" class="text-sm opacity-75">• {{ searchTime }}ms</span>
+            {{ displayedTotal }} resultados
+            <span v-if="searchTime > 0 && !isSearching" class="opacity-80">• {{ searchTime }}ms</span>
+            <span v-if="isSearching || (searchProgress.status && ['started','progress'].includes(searchProgress.status))" class="ml-2 inline-flex items-center gap-1.5">
+              <span class="loading-dots" :class="[isDarkMode ? 'text-blue-400' : 'text-blue-500']">
+                <span></span><span></span><span></span>
+              </span>
+              <span class="text-xs">Atualizando resultados...</span>
+            </span>
           </p>
-        </div>
-
-        <!-- Lista de Resultados -->
-        <div class="divide-y divide-gray-200 dark:divide-gray-700">
-          <div 
-            v-for="result in paginatedResults" 
-            :key="result.id"
-            :class="[
-              'py-4'
-            ]"
-          >
-            <!-- Cabeçalho do Resultado -->
-            <div class="flex items-start space-x-3 mb-2">
-              <!-- Favicon -->
-              <div class="flex-shrink-0">
-                <img 
-                  v-if="getFaviconUrl(result.hostname)"
-                  :src="getFaviconUrl(result.hostname)"
-                  @load="handleFaviconLoad"
-                  @error="handleFaviconError"
-                  :alt="`Favicon de ${result.hostname}`"
-                  class="w-4 h-4 rounded"
-                >
-                <div 
-                  v-else
-                  :class="[
-                    'w-4 h-4 rounded flex items-center justify-center text-xs font-bold',
-                    isDarkMode ? 'bg-gray-600 text-gray-300' : 'bg-gray-300 text-gray-600'
-                  ]"
-                >
-                  {{ getSiteInitial(result.hostname) }}
-                </div>
-              </div>
-              
-              <!-- Título e URL -->
-              <div class="flex-1 min-w-0">
-                <h3 class="text-xl font-normal leading-6 mb-1">
-                  <a 
-                    :href="result.url" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    :class="[
-                      'hover:underline transition-colors',
-                      isDarkMode 
-                        ? 'text-blue-400 visited:text-purple-400 hover:text-blue-300' 
-                        : 'text-blue-700 visited:text-purple-700 hover:text-blue-800'
-                    ]"
-                  >
-                    {{ result.title }}
-                  </a>
-                </h3>
-                <p :class="[
-                  'text-sm truncate',
-                  isDarkMode ? 'text-green-400' : 'text-green-700'
-                ]">
-                  {{ result.url }}
-                </p>
-              </div>
-              
-              <!-- Score -->
-              <div :class="[
-                'text-xs font-normal whitespace-nowrap',
-                isDarkMode ? 'text-gray-400' : 'text-gray-500'
-              ]">
-                {{ result.score }} pts
-              </div>
+          <div class="flex flex-wrap items-center gap-3">
+            <div class="flex items-center gap-2">
+              <span :class="['text-xs font-medium', isDarkMode ? 'text-gray-500' : 'text-gray-500']">Filtrar:</span>
+              <select
+                v-model="filterDomain"
+                @change="currentPage = 1"
+                :class="[
+                  'text-sm px-3 py-1.5 rounded-lg border transition-colors cursor-pointer min-w-[140px]',
+                  isDarkMode 
+                    ? 'bg-[#1a1a1a] border-white/10 text-gray-300 hover:border-white/20' 
+                    : 'bg-white border-gray-200 text-gray-700 hover:border-gray-300'
+                ]"
+              >
+                <option value="">Todos os domínios</option>
+                <option v-for="d in uniqueDomains" :key="d.domain" :value="d.domain">
+                  {{ d.domain }} ({{ d.count }})
+                </option>
+              </select>
             </div>
-            
-            <!-- Descrição -->
-            <p v-if="result.meta?.description" :class="[
-              'text-sm leading-relaxed mb-2',
-              isDarkMode ? 'text-gray-300' : 'text-gray-600'
-            ]">
-              {{ result.meta.description }}
-            </p>
-            
-            <!-- Metadados -->
-            <div class="flex flex-wrap items-center gap-2 text-xs">
-              <span :class="[
-                isDarkMode ? 'text-gray-400' : 'text-gray-500'
-              ]">
-                📅 {{ formatDate(result.timestamp) }}
-              </span>
-              
-              <span v-if="result.headings?.length" :class="[
-                isDarkMode ? 'text-gray-400' : 'text-gray-500'
-              ]">
-                📝 {{ result.headings.length }} headings
-              </span>
-              
-              <span v-if="result.topics?.length" :class="[
-                isDarkMode ? 'text-gray-400' : 'text-gray-500'
-              ]">
-                🏷️ {{ result.topics.join(', ') }}
-              </span>
+            <div class="flex items-center gap-2">
+              <span :class="['text-xs font-medium', isDarkMode ? 'text-gray-500' : 'text-gray-500']">Ordenar:</span>
+              <select
+                v-model="sortBy"
+                @change="currentPage = 1"
+                :class="[
+                  'text-sm px-3 py-1.5 rounded-lg border transition-colors cursor-pointer',
+                  isDarkMode 
+                    ? 'bg-[#1a1a1a] border-white/10 text-gray-300 hover:border-white/20' 
+                    : 'bg-white border-gray-200 text-gray-700 hover:border-gray-300'
+                ]"
+              >
+                <option value="relevance">Relevância</option>
+                <option value="date">Mais recente</option>
+                <option value="domain">Por domínio</option>
+              </select>
             </div>
           </div>
         </div>
 
+        <!-- Skeleton durante nova busca -->
+        <div v-if="isSearching || (searchProgress.status && ['started','progress'].includes(searchProgress.status))" class="space-y-4 py-4">
+          <div v-for="i in 5" :key="i" class="flex items-start gap-3">
+            <div :class="['w-4 h-4 rounded flex-shrink-0 mt-0.5 animate-pulse', isDarkMode ? 'bg-white/10' : 'bg-gray-200']"></div>
+            <div class="flex-1 min-w-0 space-y-2">
+              <div :class="['h-5 rounded w-3/4 animate-pulse', isDarkMode ? 'bg-white/10' : 'bg-gray-200']"></div>
+              <div :class="['h-3 rounded w-1/2 animate-pulse', isDarkMode ? 'bg-white/5' : 'bg-gray-100']"></div>
+              <div :class="['h-3 rounded w-full animate-pulse', isDarkMode ? 'bg-white/5' : 'bg-gray-100']"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lista de Resultados (agrupada por domínio ou plana) -->
+        <div v-else class="space-y-8 py-4">
+          <!-- Modo domínio: grupos -->
+          <template v-if="sortBy === 'domain'">
+            <div 
+              v-for="group in paginatedResultsByDomain" 
+              :key="group.baseDomain"
+              class="space-y-4"
+            >
+              <div :class="[
+                'flex items-center gap-2 pb-2 border-b',
+                isDarkMode ? 'border-white/10' : 'border-gray-200'
+              ]">
+                <span :class="[
+                  'text-xs font-semibold uppercase tracking-wider',
+                  isDarkMode ? 'text-gray-500' : 'text-gray-400'
+                ]">
+                  {{ group.baseDomain }}
+                </span>
+                <span :class="[
+                  'text-xs ml-1',
+                  isDarkMode ? 'text-gray-600' : 'text-gray-400'
+                ]">
+                  · {{ group.results.length }} {{ group.results.length === 1 ? 'resultado' : 'resultados' }}
+                </span>
+              </div>
+              <div :class="['divide-y', isDarkMode ? 'divide-white/10' : 'divide-gray-200']">
+                <article
+                  v-for="result in group.results"
+                  :key="result.id"
+                  class="py-4 first:pt-0"
+                >
+                  <ResultCard :result="result" />
+                </article>
+              </div>
+            </div>
+          </template>
+
+          <!-- Modo relevância/data: lista plana -->
+          <template v-else>
+            <div :class="['divide-y', isDarkMode ? 'divide-white/10' : 'divide-gray-200']">
+              <article
+                v-for="result in paginatedResults"
+                :key="result.id"
+                class="py-4 first:pt-0"
+              >
+                <ResultCard :result="result" />
+              </article>
+            </div>
+          </template>
+        </div>
+
         <!-- Paginação -->
-        <div v-if="calculatedTotalPages > 1" class="mt-6 flex justify-center">
+        <div v-if="calculatedTotalPages > 1 && !isSearching && !['started','progress'].includes(searchProgress.status)" class="mt-6 flex justify-center">
           <nav class="flex items-center space-x-2">
             <!-- Botão Anterior -->
             <button
@@ -327,41 +353,26 @@
         </div>
       </div>
 
-      <!-- Mensagem de Boas-vindas -->
-      <div v-else-if="!isSearching && searchResults.length === 0" class="max-w-4xl mx-auto text-center">
-        <div class="max-w-md mx-auto">
-          <h3 :class="[
-            'text-2xl font-bold mb-4',
-            isDarkMode ? 'text-gray-100' : 'text-gray-800'
-          ]">
-            Bem-vindo ao BuscaLogo!
-          </h3>
-          <p :class="[
-            'text-lg mb-6',
-            isDarkMode ? 'text-gray-300' : 'text-gray-600'
-          ]">
-            Digite sua busca acima para começar a explorar o conhecimento compartilhado pela comunidade.
-          </p>
-          <div class="space-y-3">
-            <router-link 
-              to="/instalar-extensao"
-              :class="[
-                'inline-flex items-center px-4 py-2 rounded-lg transition-colors',
-                isDarkMode 
-                  ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                  : 'bg-blue-600 text-white hover:bg-blue-700'
-              ]"
-            >
-              📥 Instalar Extensão
-            </router-link>
-            <p :class="[
-              'text-sm',
-              isDarkMode ? 'text-gray-400' : 'text-gray-500'
-            ]">
-              Após instalar, navegue por alguns sites e volte aqui para fazer sua primeira busca!
-            </p>
-          </div>
-        </div>
+      <!-- Mensagem vazia -->
+      <div v-else-if="!isSearching && searchResults.length === 0" class="max-w-xl mx-auto text-center mt-12">
+        <p :class="[
+          'text-[15px] mb-8',
+          isDarkMode ? 'text-gray-400' : 'text-gray-500'
+        ]">
+          {{ hasEverHadSearchResults ? `Nenhum resultado encontrado para "${searchQuery || searchProgress.query || ''}".` : 'Busque para explorar o conhecimento colaborativo indexado pelas extensões conectadas.' }}
+        </p>
+        <router-link 
+          v-if="!hasEverHadSearchResults"
+          to="/instalar-extensao"
+          :class="[
+            'inline-flex items-center px-6 py-2.5 rounded-full text-sm font-medium transition-all active:scale-95 duration-200',
+            isDarkMode 
+              ? 'bg-white text-black hover:bg-gray-200' 
+              : 'bg-[#1a1a1a] text-white hover:bg-black'
+          ]"
+        >
+          Instalar Extensão Chrome
+        </router-link>
       </div>
 
       <!-- Mensagem de Erro -->
@@ -390,38 +401,50 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, inject } from 'vue'
+import { ref, computed, onMounted, onUnmounted, inject } from 'vue'
 import P2PClient from '../p2p-client.js'
+import ResultCard from './ResultCard.vue'
 
-// Injeta a função de atualização do App.vue e o tema
+// Injeta do App.vue
 const updateAppConnectionStatus = inject('updateAppConnectionStatus', () => {})
 const isDarkMode = inject('isDarkMode', ref(false))
+const resetHomeRef = inject('resetHome', ref(null))
+
+const resetToInitial = () => {
+  searchResults.value = []
+  hasEverHadSearchResults.value = false
+  searchQuery.value = ''
+  searchProgress.value = {}
+  currentPage.value = 1
+  filterDomain.value = ''
+}
 
 // Estado da aplicação
 const searchQuery = ref('')
 const isSearching = ref(false)
 const searchResults = ref([])
+const hasEverHadSearchResults = ref(false)
 const searchProgress = ref({})
 const searchTime = ref(0)
 const currentPage = ref(1)
 const totalResults = ref(0)
 const resultsPerPage = ref(10)
 const sortBy = ref('relevance')
+const filterDomain = ref('')
 
 // Estado para reconexão automática
 const isReconnecting = ref(false)
 const reconnectionAttempts = ref(0)
 const maxReconnectionAttempts = 3
 
-// Computed para calcular total de páginas
+const displayedTotal = computed(() => filterDomain.value ? filteredResults.value.length : totalResults.value)
+
 const calculatedTotalPages = computed(() => {
-  return Math.ceil(totalResults.value / resultsPerPage.value)
+  return Math.ceil(displayedTotal.value / resultsPerPage.value) || 1
 })
 
-// Computed para verificar se há resultados
-const hasSearchResults = computed(() => {
-  return searchResults.value.length > 0
-})
+// Layout: mantém modo busca após primeira pesquisa (sem alterar ao fazer nova busca)
+const hasSearchResults = computed(() => searchResults.value.length > 0)
 
 // Cliente P2P
 const p2pClient = ref(null)
@@ -440,12 +463,158 @@ const progressText = computed(() => {
   return 'Preparando busca...'
 })
 
+const getBaseDomain = (hostname) => {
+  if (!hostname) return ''
+  const parts = hostname.split('.')
+  if (parts.length <= 2) return hostname
+  const multiPartTlds = ['com.br', 'co.uk', 'com.au', 'co.jp', 'net.br', 'org.br']
+  if (parts.length >= 3 && multiPartTlds.some(m => hostname.endsWith('.' + m))) {
+    return parts.slice(-3).join('.')
+  }
+  return parts.slice(-2).join('.')
+}
+
+const isBaseDomain = (hostname) => {
+  const base = getBaseDomain(hostname)
+  return hostname === base
+}
+
+const getResultHostnameForSort = (result) => {
+  if (result.metadata?.hostname) return result.metadata.hostname
+  if (result.hostname) return result.hostname
+  try {
+    return result.url ? new URL(result.url).hostname : ''
+  } catch {
+    return ''
+  }
+}
+
+/** 2=raiz sem /, 1=raiz com /, 0=tem path/hash */
+const getRootPriority = (url) => {
+  if (!url) return 0
+  try {
+    const u = new URL(url)
+    const path = u.pathname || ''
+    const hash = (u.hash || '').trim()
+    if (hash.length > 1) return 0
+    if (path === '') return 2
+    if (path === '/') return 1
+    return 0
+  } catch {
+    return 0
+  }
+}
+
+const uniqueDomains = computed(() => {
+  const counts = new Map()
+  for (const r of searchResults.value) {
+    const host = getResultHostnameForSort(r)
+    const base = getBaseDomain(host)
+    if (base) counts.set(base, (counts.get(base) || 0) + 1)
+  }
+  return Array.from(counts.entries())
+    .map(([domain, count]) => ({ domain, count }))
+    .sort((a, b) => b.count - a.count)
+})
+
+const filteredResults = computed(() => {
+  if (!filterDomain.value) return searchResults.value
+  return searchResults.value.filter(r => {
+    const host = getResultHostnameForSort(r)
+    const base = getBaseDomain(host)
+    return base === filterDomain.value
+  })
+})
+
+const sortedResults = computed(() => {
+  const results = [...filteredResults.value]
+  const sort = sortBy.value
+
+  if (sort === 'relevance') {
+    return results.sort((a, b) => {
+      const relA = a.relevance ?? a.score ?? 0
+      const relB = b.relevance ?? b.score ?? 0
+      if (relB !== relA) return relB - relA
+      const tsA = new Date(a.metadata?.scrapedAt || a.timestamp || 0)
+      const tsB = new Date(b.metadata?.scrapedAt || b.timestamp || 0)
+      return tsB - tsA
+    })
+  }
+
+  if (sort === 'date') {
+    return results.sort((a, b) => {
+      const tsA = new Date(a.metadata?.scrapedAt || a.created_at || a.timestamp || 0)
+      const tsB = new Date(b.metadata?.scrapedAt || b.created_at || b.timestamp || 0)
+      return tsB - tsA
+    })
+  }
+
+  if (sort === 'domain') {
+    return results.sort((a, b) => {
+      const hostA = getResultHostnameForSort(a)
+      const hostB = getResultHostnameForSort(b)
+      const baseA = getBaseDomain(hostA)
+      const baseB = getBaseDomain(hostB)
+      if (baseA !== baseB) return baseA.localeCompare(baseB)
+      const isBaseA = isBaseDomain(hostA)
+      const isBaseB = isBaseDomain(hostB)
+      if (isBaseA && !isBaseB) return -1
+      if (!isBaseA && isBaseB) return 1
+      const rootA = getRootPriority(a.url || a.link || '')
+      const rootB = getRootPriority(b.url || b.link || '')
+      if (rootA !== rootB) return rootB - rootA
+      const relA = a.relevance ?? a.score ?? 0
+      const relB = b.relevance ?? b.score ?? 0
+      return relB - relA
+    })
+  }
+
+  return results
+})
+
+const resultsByDomain = computed(() => {
+  const groups = new Map()
+  for (const r of sortedResults.value) {
+    const host = getResultHostnameForSort(r)
+    const base = getBaseDomain(host)
+    if (!groups.has(base)) groups.set(base, [])
+    groups.get(base).push(r)
+  }
+  for (const arr of groups.values()) {
+    arr.sort((a, b) => {
+      const hostA = getResultHostnameForSort(a)
+      const hostB = getResultHostnameForSort(b)
+      const isBaseA = isBaseDomain(hostA)
+      const isBaseB = isBaseDomain(hostB)
+      if (isBaseA && !isBaseB) return -1
+      if (!isBaseA && isBaseB) return 1
+      const rootA = getRootPriority(a.url || a.link || '')
+      const rootB = getRootPriority(b.url || b.link || '')
+      if (rootA !== rootB) return rootB - rootA
+      return (b.relevance ?? b.score ?? 0) - (a.relevance ?? a.score ?? 0)
+    })
+  }
+  return Array.from(groups.entries()).map(([baseDomain, results]) => ({ baseDomain, results }))
+})
+
 const paginatedResults = computed(() => {
   const start = (currentPage.value - 1) * resultsPerPage.value
   const end = start + resultsPerPage.value
-  const results = searchResults.value.slice(start, end)
-  console.log(`📄 Paginação: página ${currentPage.value}, mostrando ${results.length} de ${searchResults.value.length} resultados`)
-  return results
+  return sortedResults.value.slice(start, end)
+})
+
+const paginatedResultsByDomain = computed(() => {
+  const start = (currentPage.value - 1) * resultsPerPage.value
+  const end = start + resultsPerPage.value
+  const flat = resultsByDomain.value.flatMap(g => g.results)
+  const slice = flat.slice(start, end)
+  const groups = new Map()
+  for (const r of slice) {
+    const base = getBaseDomain(getResultHostnameForSort(r))
+    if (!groups.has(base)) groups.set(base, [])
+    groups.get(base).push(r)
+  }
+  return Array.from(groups.entries()).map(([baseDomain, results]) => ({ baseDomain, results }))
 })
 
 const visiblePages = computed(() => {
@@ -503,6 +672,24 @@ const getSiteInitial = (hostname) => {
   return hostname.charAt(0).toUpperCase()
 }
 
+const getResultHostname = (result) => {
+  if (result.metadata?.hostname) return result.metadata.hostname
+  if (result.hostname) return result.hostname
+  try {
+    return result.url ? new URL(result.url).hostname : null
+  } catch {
+    return null
+  }
+}
+
+const getResultDate = (result) => {
+  return result.metadata?.scrapedAt || result.created_at || result.timestamp
+}
+
+const getResultRelevance = (result) => {
+  return result.relevance ?? result.score ?? null
+}
+
 const performSearch = async () => {
   if (!searchQuery.value.trim() || isSearching.value) return
   
@@ -512,8 +699,10 @@ const performSearch = async () => {
   
   const startTime = Date.now()
   isSearching.value = true
-  searchResults.value = []
+  // Não limpa resultados: mantém layout estável até nova resposta
   currentPage.value = 1
+  filterDomain.value = ''
+  filterDomain.value = ''
   
   try {
     // Verifica se está desconectado e tenta reconectar
@@ -530,7 +719,7 @@ const performSearch = async () => {
         try {
           // Inicializa o cliente P2P
           p2pClient.value = new P2PClient()
-          await p2pClient.value.connect()
+          await p2pClient.value.connectToServer()
           
           // Aguarda um pouco para estabilizar a conexão
           await new Promise(resolve => setTimeout(resolve, 1000))
@@ -642,6 +831,7 @@ const handleResultsUpdate = (data) => {
   
   // Atualiza os dados de busca
   searchResults.value = results || []
+  if ((results?.length || 0) > 0) hasEverHadSearchResults.value = true
   currentPage.value = page || 1
   totalResults.value = total || 0
   // totalPages é calculado automaticamente pelo computed
@@ -708,6 +898,7 @@ const updateLocalConnectionStatus = (status) => {
 
 // Inicialização
 onMounted(async () => {
+  resetHomeRef.value = resetToInitial
   console.log('🚀 Inicializando BuscaLogo...')
   
   try {
@@ -734,7 +925,6 @@ onMounted(async () => {
     
     // Atualiza o status no App.vue
     updateLocalConnectionStatus()
-    
   } catch (error) {
     console.error('❌ Erro na inicialização:', error)
     console.error('Stack trace:', error.stack)
@@ -743,4 +933,30 @@ onMounted(async () => {
     updateLocalConnectionStatus()
   }
 })
+
+onUnmounted(() => {
+  if (resetHomeRef?.value === resetToInitial) resetHomeRef.value = null
+})
 </script>
+
+<style scoped>
+.loading-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.loading-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: loading-dots 1.4s ease-in-out infinite both;
+}
+.loading-dots span:nth-child(1) { animation-delay: 0s; }
+.loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+.loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes loading-dots {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; }
+  40% { transform: scale(1); opacity: 1; }
+}
+</style>
