@@ -371,7 +371,7 @@
               : 'bg-[#1a1a1a] text-white hover:bg-black'
           ]"
         >
-          Instalar Extensão Chrome
+          Instalar extensão e Agent
         </router-link>
       </div>
 
