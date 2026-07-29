@@ -12,6 +12,9 @@
   --bl-border: #e4e4e7;
   --bl-surface: #ffffff;
   --bl-bg: #f7f7f8;
+  --bl-link: #1a5cff;
+  --bl-link-visited: #6b4fa0;
+  --bl-url: #0b7a4b;
   --bl-search-shadow: 0 2px 12px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.04);
   --bl-search-shadow-focus: 0 4px 20px rgba(232, 148, 42, 0.18), 0 0 0 2px rgba(232, 148, 42, 0.35);
 }
@@ -24,6 +27,9 @@ html.dark {
   --bl-surface: #18181b;
   --bl-bg: #0c0c0e;
   --bl-amber-soft: #2a1f12;
+  --bl-link: #8ab4ff;
+  --bl-link-visited: #c58af9;
+  --bl-url: #5dd39e;
   --bl-search-shadow: 0 2px 12px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.06);
   --bl-search-shadow-focus: 0 4px 20px rgba(232, 148, 42, 0.25), 0 0 0 2px rgba(232, 148, 42, 0.45);
 }

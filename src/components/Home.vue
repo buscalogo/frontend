@@ -119,74 +119,47 @@
       </div>
     </div>
 
-    <div 
-      class="flex-1 container mx-auto px-4" 
-      :class="hasEverHadSearchResults ? 'py-4' : 'py-6'"
+    <div
+      class="flex-1 w-full"
+      :class="hasEverHadSearchResults ? 'py-2' : 'py-6'"
     >
-      <!-- Status da Busca (primeira vez, sem resultados ainda) -->
-      <div v-if="(isSearching || (searchProgress.status && searchProgress.status !== 'idle')) && !hasEverHadSearchResults" class="max-w-4xl mx-auto text-center mt-6">
-        <p :class="[
-          'text-sm font-medium flex items-center justify-center gap-2',
-          isDarkMode ? 'text-gray-400' : 'text-gray-500'
-        ]">
-          <span class="loading-dots text-[var(--bl-amber)]">
-            <span></span><span></span><span></span>
-          </span>
+      <div v-if="(isSearching || (searchProgress.status && searchProgress.status !== 'idle')) && !hasEverHadSearchResults" class="max-w-2xl mx-auto px-4 text-center mt-6">
+        <p class="text-sm font-medium flex items-center justify-center gap-2 text-[var(--bl-muted)]">
+          <span class="loading-dots text-[var(--bl-amber)]"><span></span><span></span><span></span></span>
           {{ progressText }}
-          <span v-if="searchProgress.peersCount > 0" class="opacity-75 relative bottom-[0.5px] ml-2 font-normal text-xs">
-            {{ searchProgress.peersResponded || 0 }}/{{ searchProgress.peersCount }} peers 
+          <span v-if="searchProgress.peersCount > 0" class="opacity-75 ml-2 font-normal text-xs">
+            {{ searchProgress.peersResponded || 0 }}/{{ searchProgress.peersCount }} peers
             <span v-if="searchProgress.progress">({{ searchProgress.progress }}%)</span>
           </span>
         </p>
       </div>
 
-      <!-- Resultados da Busca -->
-      <div v-if="searchResults.length > 0" class="max-w-4xl mx-auto">
-        <!-- Barra de ferramentas -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
-          <p :class="[
-            'text-sm',
-            isDarkMode ? 'text-gray-400' : 'text-gray-500'
-          ]">
-            {{ displayedTotal }} resultados
-            <span v-if="searchTime > 0 && !isSearching" class="opacity-80">• {{ searchTime }}ms</span>
-            <span v-if="isSearching || (searchProgress.status && ['started','progress'].includes(searchProgress.status))" class="ml-2 inline-flex items-center gap-1.5">
-              <span class="loading-dots text-[var(--bl-amber)]">
-                <span></span><span></span><span></span>
+      <div v-if="searchResults.length > 0" class="w-full">
+        <div class="max-w-[42rem] mx-auto md:mx-0 md:ml-[max(1rem,calc((100%-56rem)/2))] px-4 md:pl-6 lg:pl-8">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 py-3 border-b border-[var(--bl-border)]/70 mb-1">
+            <p class="text-[13px] text-[var(--bl-muted)]">
+              About {{ displayedTotal.toLocaleString('pt-BR') }} results
+              <span v-if="searchTime > 0 && !isSearching" class="opacity-70">({{ (searchTime / 1000).toFixed(2) }} seconds)</span>
+              <span v-if="isSearching || (searchProgress.status && ['started','progress'].includes(searchProgress.status))" class="ml-2 inline-flex items-center gap-1.5 text-[var(--bl-amber)]">
+                <span class="loading-dots"><span></span><span></span><span></span></span>
+                <span class="text-xs">Atualizando…</span>
               </span>
-              <span class="text-xs">Atualizando resultados...</span>
-            </span>
-          </p>
-          <div class="flex flex-wrap items-center gap-3">
-            <div class="flex items-center gap-2">
-              <span :class="['text-xs font-medium', isDarkMode ? 'text-gray-500' : 'text-gray-500']">Filtrar:</span>
+            </p>
+            <div class="flex flex-wrap items-center gap-2">
               <select
                 v-model="filterDomain"
                 @change="currentPage = 1"
-                :class="[
-                  'text-sm px-3 py-1.5 rounded-lg border transition-colors cursor-pointer min-w-[140px]',
-                  isDarkMode 
-                    ? 'bg-[#1a1a1a] border-white/10 text-gray-300 hover:border-white/20' 
-                    : 'bg-white border-gray-200 text-gray-700 hover:border-gray-300'
-                ]"
+                class="text-[13px] px-2.5 py-1.5 rounded-lg border border-[var(--bl-border)] bg-[var(--bl-surface)] text-[var(--bl-ink)] cursor-pointer"
               >
-                <option value="">Todos os domínios</option>
+                <option value="">Todos os sites</option>
                 <option v-for="d in uniqueDomains" :key="d.domain" :value="d.domain">
                   {{ d.domain }} ({{ d.count }})
                 </option>
               </select>
-            </div>
-            <div class="flex items-center gap-2">
-              <span :class="['text-xs font-medium', isDarkMode ? 'text-gray-500' : 'text-gray-500']">Ordenar:</span>
               <select
                 v-model="sortBy"
                 @change="currentPage = 1"
-                :class="[
-                  'text-sm px-3 py-1.5 rounded-lg border transition-colors cursor-pointer',
-                  isDarkMode 
-                    ? 'bg-[#1a1a1a] border-white/10 text-gray-300 hover:border-white/20' 
-                    : 'bg-white border-gray-200 text-gray-700 hover:border-gray-300'
-                ]"
+                class="text-[13px] px-2.5 py-1.5 rounded-lg border border-[var(--bl-border)] bg-[var(--bl-surface)] text-[var(--bl-ink)] cursor-pointer"
               >
                 <option value="relevance">Relevância</option>
                 <option value="date">Mais recente</option>
@@ -194,170 +167,79 @@
               </select>
             </div>
           </div>
-        </div>
 
-        <!-- Skeleton durante nova busca -->
-        <div v-if="isSearching || (searchProgress.status && ['started','progress'].includes(searchProgress.status))" class="space-y-4 py-4">
-          <div v-for="i in 5" :key="i" class="flex items-start gap-3">
-            <div :class="['w-4 h-4 rounded flex-shrink-0 mt-0.5 animate-pulse', isDarkMode ? 'bg-white/10' : 'bg-gray-200']"></div>
-            <div class="flex-1 min-w-0 space-y-2">
-              <div :class="['h-5 rounded w-3/4 animate-pulse', isDarkMode ? 'bg-white/10' : 'bg-gray-200']"></div>
-              <div :class="['h-3 rounded w-1/2 animate-pulse', isDarkMode ? 'bg-white/5' : 'bg-gray-100']"></div>
-              <div :class="['h-3 rounded w-full animate-pulse', isDarkMode ? 'bg-white/5' : 'bg-gray-100']"></div>
+          <div v-if="isSearching || (searchProgress.status && ['started','progress'].includes(searchProgress.status))" class="space-y-7 py-6">
+            <div v-for="i in 5" :key="i" class="space-y-2">
+              <div class="flex items-center gap-2">
+                <div class="w-5 h-5 rounded-full animate-pulse bg-[var(--bl-border)]"></div>
+                <div class="h-3 w-40 rounded animate-pulse bg-[var(--bl-border)]"></div>
+              </div>
+              <div class="h-5 w-4/5 rounded animate-pulse bg-[var(--bl-border)]"></div>
+              <div class="h-3 w-full rounded animate-pulse bg-[var(--bl-border)]/60"></div>
+              <div class="h-3 w-2/3 rounded animate-pulse bg-[var(--bl-border)]/60"></div>
             </div>
           </div>
-        </div>
 
-        <!-- Lista de Resultados (agrupada por domínio ou plana) -->
-        <div v-else class="space-y-8 py-4">
-          <!-- Modo domínio: grupos -->
-          <template v-if="sortBy === 'domain'">
-            <div 
-              v-for="group in paginatedResultsByDomain" 
-              :key="group.baseDomain"
-              class="space-y-4"
-            >
-              <div :class="[
-                'flex items-center gap-2 pb-2 border-b',
-                isDarkMode ? 'border-white/10' : 'border-gray-200'
-              ]">
-                <span :class="[
-                  'text-xs font-semibold uppercase tracking-wider',
-                  isDarkMode ? 'text-gray-500' : 'text-gray-400'
-                ]">
-                  {{ group.baseDomain }}
-                </span>
-                <span :class="[
-                  'text-xs ml-1',
-                  isDarkMode ? 'text-gray-600' : 'text-gray-400'
-                ]">
-                  · {{ group.results.length }} {{ group.results.length === 1 ? 'resultado' : 'resultados' }}
-                </span>
+          <div v-else class="py-4">
+            <template v-if="sortBy === 'domain'">
+              <div v-for="group in paginatedResultsByDomain" :key="group.baseDomain" class="mb-8">
+                <div class="flex items-baseline gap-2 mb-4 pb-2 border-b border-[var(--bl-border)]/50">
+                  <span class="text-xs font-semibold uppercase tracking-wider text-[var(--bl-amber)]">{{ group.baseDomain }}</span>
+                  <span class="text-xs text-[var(--bl-muted)]">{{ group.results.length }} {{ group.results.length === 1 ? 'resultado' : 'resultados' }}</span>
+                </div>
+                <div class="space-y-7">
+                  <ResultCard v-for="result in group.results" :key="result.id" :result="result" />
+                </div>
               </div>
-              <div :class="['divide-y', isDarkMode ? 'divide-white/10' : 'divide-gray-200']">
-                <article
-                  v-for="result in group.results"
-                  :key="result.id"
-                  class="py-4 first:pt-0"
-                >
-                  <ResultCard :result="result" />
-                </article>
-              </div>
+            </template>
+            <div v-else class="space-y-7">
+              <ResultCard v-for="result in paginatedResults" :key="result.id" :result="result" />
             </div>
-          </template>
+          </div>
 
-          <!-- Modo relevância/data: lista plana -->
-          <template v-else>
-            <div :class="['divide-y', isDarkMode ? 'divide-white/10' : 'divide-gray-200']">
-              <article
-                v-for="result in paginatedResults"
-                :key="result.id"
-                class="py-4 first:pt-0"
-              >
-                <ResultCard :result="result" />
-              </article>
-            </div>
-          </template>
-        </div>
-
-        <!-- Paginação -->
-        <div v-if="calculatedTotalPages > 1 && !isSearching && !['started','progress'].includes(searchProgress.status)" class="mt-6 flex justify-center">
-          <nav class="flex items-center space-x-2">
-            <!-- Botão Anterior -->
-            <button
-              @click="goToPage(currentPage - 1)"
-              :disabled="currentPage <= 1"
-              :class="[
-                'px-3 py-2 rounded-lg text-sm font-medium transition-colors',
-                currentPage <= 1
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : isDarkMode
-                    ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              ]"
-            >
-              ← Anterior
-            </button>
-            
-            <!-- Páginas -->
-            <div class="flex items-center space-x-1">
-              <button
-                v-for="page in visiblePages"
-                :key="page"
-                @click="goToPage(page)"
-                :class="[
-                  'px-3 py-2 rounded-lg text-sm font-medium transition-colors',
-                  page === currentPage
-                    ? 'bl-btn-accent text-white'
-                    : isDarkMode
-                      ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                ]"
-              >
+          <div
+            v-if="calculatedTotalPages > 1 && !isSearching && !['started','progress'].includes(searchProgress.status)"
+            class="mt-8 mb-10 flex justify-start"
+          >
+            <nav class="flex items-center gap-1.5">
+              <button type="button" @click="goToPage(currentPage - 1)" :disabled="currentPage <= 1"
+                :class="['px-3 py-2 rounded-lg text-sm font-medium transition-colors', currentPage <= 1 ? 'opacity-40 cursor-not-allowed text-[var(--bl-muted)]' : 'text-[var(--bl-ink)] hover:bg-[var(--bl-border)]/40']">
+                ← Anterior
+              </button>
+              <button v-for="page in visiblePages" :key="page" type="button" @click="goToPage(page)"
+                :class="['min-w-[2.25rem] px-2.5 py-2 rounded-lg text-sm font-medium transition-colors', page === currentPage ? 'bl-btn-accent text-white' : 'text-[var(--bl-ink)] hover:bg-[var(--bl-border)]/40']">
                 {{ page }}
               </button>
-            </div>
-            
-            <!-- Botão Próximo -->
-            <button
-              @click="goToPage(currentPage + 1)"
-              :disabled="currentPage >= calculatedTotalPages"
-              :class="[
-                'px-3 py-2 rounded-lg text-sm font-medium transition-colors',
-                currentPage >= calculatedTotalPages
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : isDarkMode
-                    ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              ]"
-            >
-              Próximo →
-            </button>
-          </nav>
+              <button type="button" @click="goToPage(currentPage + 1)" :disabled="currentPage >= calculatedTotalPages"
+                :class="['px-3 py-2 rounded-lg text-sm font-medium transition-colors', currentPage >= calculatedTotalPages ? 'opacity-40 cursor-not-allowed text-[var(--bl-muted)]' : 'text-[var(--bl-ink)] hover:bg-[var(--bl-border)]/40']">
+                Próximo →
+              </button>
+            </nav>
+          </div>
         </div>
       </div>
 
-      <!-- Mensagem vazia -->
-      <div v-else-if="!isSearching && searchResults.length === 0" class="max-w-xl mx-auto text-center mt-12">
-        <p :class="[
-          'text-[15px] mb-8',
-          isDarkMode ? 'text-gray-400' : 'text-gray-500'
-        ]">
+      <div v-else-if="!isSearching && searchResults.length === 0" class="max-w-xl mx-auto px-4 text-center mt-12">
+        <p class="text-[15px] mb-8 text-[var(--bl-muted)]">
           {{ hasEverHadSearchResults ? `Nenhum resultado encontrado para "${searchQuery || searchProgress.query || ''}".` : 'Busque para explorar o conhecimento colaborativo indexado pelas extensões conectadas.' }}
         </p>
-        <router-link 
-          v-if="!hasEverHadSearchResults"
-          to="/instalar-extensao"
-          :class="[
-            'inline-flex items-center px-6 py-2.5 rounded-full text-sm font-medium transition-all active:scale-95 duration-200',
-            isDarkMode 
-              ? 'bg-white text-black hover:bg-gray-200' 
-              : 'bg-[#1a1a1a] text-white hover:bg-black'
-          ]"
-        >
+        <router-link v-if="!hasEverHadSearchResults" to="/instalar-extensao"
+          class="inline-flex items-center px-6 py-2.5 rounded-full text-sm font-medium bl-btn-accent transition-all active:scale-95">
           Instalar extensão e Agent
         </router-link>
       </div>
 
-      <!-- Mensagem de Erro -->
-      <div v-if="searchProgress.status === 'error'" class="max-w-4xl mx-auto text-center">
-        <div :class="[
-          'p-6 rounded-lg border',
-          isDarkMode ? 'bg-red-900/20 border-red-700 text-red-300' : 'bg-red-50 border-red-200 text-red-700'
-        ]">
-          <h3 class="text-lg font-medium mb-2">❌ Erro na busca</h3>
-          <p>{{ searchProgress.error }}</p>
+      <div v-if="searchProgress.status === 'error'" class="max-w-2xl mx-auto px-4 text-center mt-6">
+        <div class="p-5 rounded-2xl border border-red-300/50 bg-red-50 text-red-700 dark:bg-red-900/20 dark:border-red-700 dark:text-red-300">
+          <h3 class="text-base font-semibold mb-1">Erro na busca</h3>
+          <p class="text-sm">{{ searchProgress.error }}</p>
         </div>
       </div>
 
-      <!-- Mensagem de Nenhum Peer -->
-      <div v-if="searchProgress.status === 'no_peers'" class="max-w-4xl mx-auto text-center">
-        <div :class="[
-          'p-6 rounded-lg border',
-          isDarkMode ? 'bg-yellow-900/20 border-yellow-700 text-yellow-300' : 'bg-yellow-50 border-yellow-200 text-yellow-700'
-        ]">
-          <h3 class="text-lg font-medium mb-2">⚠️ Nenhuma extensão conectada</h3>
-          <p>Instale a extensão BuscaLogo para buscar em páginas capturadas por outros usuários.</p>
+      <div v-if="searchProgress.status === 'no_peers'" class="max-w-2xl mx-auto px-4 text-center mt-6">
+        <div class="p-5 rounded-2xl border border-[var(--bl-amber)]/30 bg-[var(--bl-amber-soft)] text-[var(--bl-ink)]">
+          <h3 class="text-base font-semibold mb-1">Nenhuma extensão conectada</h3>
+          <p class="text-sm text-[var(--bl-muted)]">Instale a extensão BuscaLogo para buscar em páginas indexadas pela rede.</p>
         </div>
       </div>
     </div>
