@@ -4,7 +4,7 @@
   <ShortName>BuscaLogo</ShortName>
   <Description>Buscador colaborativo P2P — BuscaLogo</Description>
   <InputEncoding>UTF-8</InputEncoding>
-  <Image width="16" height="16" type="image/png">https://buscalogo.com/opensearch-icon.png</Image>
+  <Image width="64" height="64" type="image/png">https://buscalogo.com/favicon-64.png</Image>
   <Url type="text/html" method="get" template="https://buscalogo.com/search?q={searchTerms}"/>
   <Url type="application/opensearchdescription+xml" rel="self" template="https://buscalogo.com/opensearch.xml"/>
   <moz:SearchForm>https://buscalogo.com/</moz:SearchForm>

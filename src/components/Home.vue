@@ -16,22 +16,17 @@
     <!-- Campo de Busca: Teleport para header quando há resultados -->
     <Teleport v-if="hasEverHadSearchResults" to="#header-search-slot">
       <div class="w-full max-w-xl mx-auto">
-        <div class="relative w-full shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:shadow-[0_8px_30px_rgb(255,255,255,0.03)] rounded-full">
+        <div class="relative w-full">
           <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-            <svg class="h-4 w-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+            <svg class="h-4 w-4 text-[var(--bl-muted)]" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
             </svg>
           </div>
           <input
             v-model="searchQuery"
             @keyup.enter="performSearch"
-            :class="[
-              'w-full border-0 pl-10 pr-10 py-2 text-sm rounded-full focus:outline-none focus:ring-1',
-              isDarkMode 
-                ? 'bg-[#1a1a1a] text-gray-100 placeholder-gray-500 focus:ring-gray-600' 
-                : 'bg-white text-gray-900 placeholder-gray-400 focus:ring-gray-300'
-            ]"
-            placeholder="Pesquise na rede P2P..."
+            class="bl-search w-full border-0 pl-10 pr-11 py-2.5 text-sm"
+            placeholder="Pesquisar na rede P2P…"
             :disabled="isSearching || isReconnecting"
           >
           <button
@@ -41,13 +36,12 @@
             :class="[
               'absolute right-1.5 top-1/2 -translate-y-1/2 rounded-full p-1.5 transition-all duration-200',
               isSearching || isReconnecting || !searchQuery.trim()
-                ? 'opacity-50 cursor-not-allowed'
-                : 'opacity-90 hover:opacity-100',
-              isDarkMode ? 'text-gray-400 hover:text-gray-300' : 'text-gray-500 hover:text-gray-700'
+                ? 'opacity-40 cursor-not-allowed text-[var(--bl-muted)]'
+                : 'bl-btn-accent hover:opacity-95'
             ]"
             title="Buscar"
           >
-            <span v-if="isSearching || isReconnecting" class="block w-3.5 h-3.5 border border-current border-t-transparent rounded-full animate-spin"></span>
+            <span v-if="isSearching || isReconnecting" class="block w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
             <svg v-else class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
             </svg>
@@ -56,101 +50,71 @@
       </div>
     </Teleport>
 
-    <!-- Campo de Busca (estado inicial - antes da primeira busca) -->
+    <!-- Home estilo Brave: mascote + wordmark + barra central -->
     <div 
       v-if="!hasEverHadSearchResults"
-      class="transition-all duration-500 ease-in-out flex flex-col w-full py-0 min-h-[60vh] justify-center"
+      class="fade-in flex flex-col w-full min-h-[62vh] justify-center"
     >
       <div class="container mx-auto px-4">
-        <div class="max-w-4xl mx-auto">
-          <!-- Logo e Título -->
-          <div class="text-center mb-10">
-            <h1 
-              :class="[
-                'text-5xl md:text-7xl font-bold tracking-tight mb-3',
-                isDarkMode ? 'text-gray-100' : 'text-gray-900'
-              ]"
+        <div class="max-w-2xl mx-auto">
+          <div class="text-center mb-8">
+            <img
+              src="@/assets/img/logo.png"
+              alt="BuscaLogo"
+              class="w-28 h-28 md:w-36 md:h-36 mx-auto mb-5 object-contain drop-shadow-md select-none"
+              draggable="false"
             >
-              BuscaLogo
+            <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-2">
+              Busca<span class="text-[var(--bl-amber)]">Logo</span>
             </h1>
-            <p 
-              :class="[
-                'text-base md:text-lg',
-                isDarkMode ? 'text-gray-400' : 'text-gray-500'
-              ]"
-            >
-              Buscador colaborativo P2P
+            <p class="text-sm md:text-base text-[var(--bl-muted)]">
+              Busca colaborativa P2P
             </p>
           </div>
 
-          <DefaultSearchHint />
-
-          <!-- Campo de Busca (Centralizado) -->
-          <div class="flex justify-center">
-            <div 
-              class="relative" 
-              :class="hasSearchResults ? 'w-full max-w-lg' : 'w-full max-w-2xl'"
-            >
-              <div class="relative w-full shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:shadow-[0_8px_30px_rgb(255,255,255,0.03)] rounded-full">
-                <!-- Ícone de Busca interno -->
-                <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-                  <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
-                  </svg>
-                </div>
-                <input
-                  v-model="searchQuery"
-                  @keyup.enter="performSearch"
-                  :class="[
-                    'w-full border-0 transition-all duration-200 focus:outline-none focus:ring-1 rounded-full',
-                    'pl-12 pr-12 py-4 text-lg',
-                    isDarkMode 
-                      ? 'bg-[#1a1a1a] text-gray-100 placeholder-gray-500 focus:ring-gray-600' 
-                      : 'bg-white text-gray-900 placeholder-gray-400 focus:ring-gray-300'
-                  ]"
-                  placeholder="Pesquise na rede P2P..."
-                  :disabled="isSearching || isReconnecting"
-                >
-                <button
-                  type="button"
-                  @click="performSearch"
-                  :disabled="isSearching || isReconnecting || !searchQuery.trim()"
-                  :class="[
-                    'absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-2 transition-all duration-200',
-                    isSearching || isReconnecting || !searchQuery.trim()
-                      ? 'opacity-50 cursor-not-allowed'
-                      : 'opacity-90 hover:opacity-100',
-                    isDarkMode ? 'text-gray-400 hover:text-gray-300' : 'text-gray-500 hover:text-gray-700'
-                  ]"
-                  title="Buscar"
-                >
-                  <span v-if="isReconnecting || isSearching" class="block w-4 h-4 border border-current border-t-transparent rounded-full animate-spin"></span>
-                  <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                  </svg>
-                </button>
+          <div class="flex justify-center mb-5">
+            <div class="relative w-full">
+              <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                <svg class="h-5 w-5 text-[var(--bl-muted)]" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                </svg>
               </div>
-              
-              <!-- Indicador de Reconexão -->
-              <div v-if="isReconnecting" class="mt-3 text-center">
-                <div class="flex items-center justify-center space-x-2">
-                  <div class="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                  <span :class="[
-                    'text-sm font-medium',
-                    isDarkMode ? 'text-blue-400' : 'text-blue-600'
-                  ]">
-                    Reconectando ao servidor... ({{ reconnectionAttempts }}/{{ maxReconnectionAttempts }})
-                  </span>
-                </div>
-                <p :class="[
-                  'text-xs mt-1',
-                  isDarkMode ? 'text-gray-400' : 'text-gray-500'
-                ]">
-                  Tentando restabelecer a conexão automaticamente
-                </p>
-              </div>
+              <input
+                v-model="searchQuery"
+                @keyup.enter="performSearch"
+                class="bl-search w-full border-0 pl-12 pr-14 py-4 text-lg"
+                placeholder="Pesquisar na rede P2P…"
+                :disabled="isSearching || isReconnecting"
+                autofocus
+              >
+              <button
+                type="button"
+                @click="performSearch"
+                :disabled="isSearching || isReconnecting || !searchQuery.trim()"
+                :class="[
+                  'absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-2.5 transition-all duration-200',
+                  isSearching || isReconnecting || !searchQuery.trim()
+                    ? 'opacity-40 cursor-not-allowed text-[var(--bl-muted)]'
+                    : 'bl-btn-accent shadow-sm hover:opacity-95'
+                ]"
+                title="Buscar"
+              >
+                <span v-if="isReconnecting || isSearching" class="block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
+                <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </button>
             </div>
           </div>
+
+          <div v-if="isReconnecting" class="text-center mb-4">
+            <div class="flex items-center justify-center gap-2 text-sm text-[var(--bl-amber)]">
+              <span class="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
+              Reconectando… ({{ reconnectionAttempts }}/{{ maxReconnectionAttempts }})
+            </div>
+          </div>
+
+          <DefaultSearchHint />
         </div>
       </div>
     </div>
@@ -165,7 +129,7 @@
           'text-sm font-medium flex items-center justify-center gap-2',
           isDarkMode ? 'text-gray-400' : 'text-gray-500'
         ]">
-          <span class="loading-dots" :class="[isDarkMode ? 'text-blue-400' : 'text-blue-500']">
+          <span class="loading-dots text-[var(--bl-amber)]">
             <span></span><span></span><span></span>
           </span>
           {{ progressText }}
@@ -187,7 +151,7 @@
             {{ displayedTotal }} resultados
             <span v-if="searchTime > 0 && !isSearching" class="opacity-80">• {{ searchTime }}ms</span>
             <span v-if="isSearching || (searchProgress.status && ['started','progress'].includes(searchProgress.status))" class="ml-2 inline-flex items-center gap-1.5">
-              <span class="loading-dots" :class="[isDarkMode ? 'text-blue-400' : 'text-blue-500']">
+              <span class="loading-dots text-[var(--bl-amber)]">
                 <span></span><span></span><span></span>
               </span>
               <span class="text-xs">Atualizando resultados...</span>
@@ -324,9 +288,7 @@
                 :class="[
                   'px-3 py-2 rounded-lg text-sm font-medium transition-colors',
                   page === currentPage
-                    ? isDarkMode
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-blue-600 text-white'
+                    ? 'bl-btn-accent text-white'
                     : isDarkMode
                       ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -988,25 +950,3 @@ onUnmounted(() => {
   if (resetHomeRef?.value === resetToInitial) resetHomeRef.value = null
 })
 </script>
-
-<style scoped>
-.loading-dots {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-.loading-dots span {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: currentColor;
-  animation: loading-dots 1.4s ease-in-out infinite both;
-}
-.loading-dots span:nth-child(1) { animation-delay: 0s; }
-.loading-dots span:nth-child(2) { animation-delay: 0.2s; }
-.loading-dots span:nth-child(3) { animation-delay: 0.4s; }
-@keyframes loading-dots {
-  0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; }
-  40% { transform: scale(1); opacity: 1; }
-}
-</style>

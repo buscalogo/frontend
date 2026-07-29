@@ -2,8 +2,8 @@
   <div class="container mx-auto px-4 py-8">
     <main class="max-w-4xl mx-auto">
       <div class="text-center mb-12">
-        <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
-          <img src="@/assets/img/dark-logo.png" alt="BuscaLogo" class="w-12 h-12">
+        <div class="w-20 h-20 flex items-center justify-center mx-auto mb-6">
+          <img src="@/assets/img/logo.png" alt="BuscaLogo" class="w-20 h-20 object-contain drop-shadow-md">
         </div>
         <h1 :class="['text-4xl font-bold mb-4', isDarkMode ? 'text-gray-100' : 'text-gray-800']">
           Instalar BuscaLogo
