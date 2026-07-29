@@ -21,7 +21,9 @@ build/
 
 # Cache directories
 .cache/
-public/
+
+# NÃO ignore public/ — Vite copia public/ → dist/ no build
+# (opensearch.xml, ícones, _redirects). Precisa estar no git.
 
 # Vue specific
 *.local
@@ -33,6 +35,5 @@ public/
 .DS_Store
 *.log
 *.tsbuildinfo
-# End Generation Here
 package-lock.json
 yarn.lock
