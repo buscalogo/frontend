@@ -83,6 +83,8 @@
             </p>
           </div>
 
+          <DefaultSearchHint />
+
           <!-- Campo de Busca (Centralizado) -->
           <div class="flex justify-center">
             <div 
@@ -401,14 +403,38 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, inject } from 'vue'
+import { ref, computed, onMounted, onUnmounted, inject, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import P2PClient from '../p2p-client.js'
 import ResultCard from './ResultCard.vue'
+import DefaultSearchHint from './DefaultSearchHint.vue'
 
 // Injeta do App.vue
 const updateAppConnectionStatus = inject('updateAppConnectionStatus', () => {})
 const isDarkMode = inject('isDarkMode', ref(false))
 const resetHomeRef = inject('resetHome', ref(null))
+const route = useRoute()
+const router = useRouter()
+
+const readQueryParam = () => {
+  const q = route.query.q
+  if (typeof q === 'string') return q.trim()
+  if (Array.isArray(q) && typeof q[0] === 'string') return q[0].trim()
+  return ''
+}
+
+const syncQueryToUrl = (term) => {
+  const q = (term || '').trim()
+  if (!q) {
+    if (route.path === '/search' || route.query.q) {
+      router.replace({ path: '/' })
+    }
+    return
+  }
+  if (route.path !== '/search' || route.query.q !== q) {
+    router.replace({ path: '/search', query: { q } })
+  }
+}
 
 const resetToInitial = () => {
   searchResults.value = []
@@ -417,6 +443,7 @@ const resetToInitial = () => {
   searchProgress.value = {}
   currentPage.value = 1
   filterDomain.value = ''
+  syncQueryToUrl('')
 }
 
 // Estado da aplicação
@@ -696,6 +723,8 @@ const performSearch = async () => {
   console.log('🔍 Iniciando busca por:', searchQuery.value)
   console.log('📱 P2PClient disponível:', !!p2pClient.value)
   console.log('🔌 Status da conexão:', p2pClient.value?.isConnected)
+
+  syncQueryToUrl(searchQuery.value)
   
   const startTime = Date.now()
   isSearching.value = true
@@ -925,6 +954,13 @@ onMounted(async () => {
     
     // Atualiza o status no App.vue
     updateLocalConnectionStatus()
+
+    // Deep-link: /search?q=termo (ou redirect de /?q=)
+    const initialQ = readQueryParam()
+    if (initialQ) {
+      searchQuery.value = initialQ
+      await performSearch()
+    }
   } catch (error) {
     console.error('❌ Erro na inicialização:', error)
     console.error('Stack trace:', error.stack)
@@ -933,6 +969,20 @@ onMounted(async () => {
     updateLocalConnectionStatus()
   }
 })
+
+// Navegação do browser (voltar/avançar) com ?q=
+watch(
+  () => route.query.q,
+  async (q) => {
+    const term = typeof q === 'string' ? q.trim() : ''
+    if (!term) return
+    if (term === searchQuery.value.trim() && (isSearching.value || hasEverHadSearchResults.value)) {
+      return
+    }
+    searchQuery.value = term
+    await performSearch()
+  }
+)
 
 onUnmounted(() => {
   if (resetHomeRef?.value === resetToInitial) resetHomeRef.value = null

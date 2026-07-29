@@ -10,6 +10,20 @@ const routes = [
   {
     path: '/',
     name: 'Home',
+    component: Home,
+    beforeEnter(to, _from, next) {
+      // Compat: /?q=termo → /search?q=termo (padrão de mecanismos de busca)
+      const q = to.query.q
+      if (typeof q === 'string' && q.trim()) {
+        next({ path: '/search', query: { q: q.trim() }, replace: true })
+        return
+      }
+      next()
+    }
+  },
+  {
+    path: '/search',
+    name: 'Search',
     component: Home
   },
   {

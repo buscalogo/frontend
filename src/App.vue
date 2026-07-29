@@ -191,7 +191,7 @@ const currentQuery = computed(() => {
 })
 
 const isHomePage = computed(() => {
-  return route.path === '/'
+  return route.path === '/' || route.path === '/search'
 })
 
 // Função para alternar o tema
