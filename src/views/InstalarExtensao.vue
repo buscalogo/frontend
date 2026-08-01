@@ -9,7 +9,7 @@
           Instalar BuscaLogo
         </h1>
         <p :class="['text-lg max-w-2xl mx-auto', isDarkMode ? 'text-gray-300' : 'text-gray-600']">
-          Extensão na Chrome Web Store + Agent local (launcher) para indexação, DNS <code class="text-sm">.bl</code> e busca offline.
+          Extensão na Chrome Web Store + Agent local (launcher) para indexação, DNS <code class="text-sm">.bl</code> / <code class="text-sm">.lo</code> e busca offline.
         </p>
       </div>
 
@@ -55,7 +55,7 @@
               BuscaLogo Agent (Launcher)
             </h3>
             <p :class="['text-base max-w-2xl mx-auto', isDarkMode ? 'text-green-300' : 'text-green-700']">
-              Substitui o antigo BuscaLogo Desktop. Roda localmente: painel, scraper, DNS <code>.bl</code>, CouchDB e P2P.
+              Substitui o antigo BuscaLogo Desktop. Roda localmente: painel, scraper, DNS <code>.bl</code> / <code>.lo</code>, CouchDB e P2P.
             </p>
           </div>
 
@@ -71,7 +71,7 @@
                 </li>
                 <li class="flex items-center">
                   <svg class="w-4 h-4 mr-2 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
-                  Scraper e sites <code class="text-xs">*.bl</code>
+                  Scraper e sites <code class="text-xs">*.bl</code> / <code class="text-xs">*.lo</code>
                 </li>
                 <li class="flex items-center">
                   <svg class="w-4 h-4 mr-2 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
