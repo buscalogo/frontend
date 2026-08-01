@@ -4,7 +4,8 @@
     {
       "ygg_ip": "200:63ac:4c32:e7f3:4db2:9c6e:6f3d:d088",
       "name": "seed-principal",
-      "note": "registry seed público BuscaLogo"
+      "note": "registry seed público BuscaLogo (emissor CA)",
+      "ca_issuer": true
     }
   ]
 }
