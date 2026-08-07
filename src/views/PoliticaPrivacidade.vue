@@ -20,6 +20,12 @@
             <strong>Última atualização:</strong> 27 de agosto de 2025 - Versão 2.0
           </p>
         </div>
+        <div class="mt-4 p-4 rounded-lg border" :class="isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'">
+          <p class="text-sm" :class="isDarkMode ? 'text-gray-300' : 'text-gray-600'">
+            Esta página cobre o mecanismo de busca BuscaLogo. Para a extensão de tradução de chats, veja a
+            <router-link to="/privacidade/chat-translator" class="text-blue-600 hover:underline">Política de Privacidade do Universal Chat Translator</router-link>.
+          </p>
+        </div>
       </div>
 
       <!-- Conteúdo Principal -->

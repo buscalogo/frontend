@@ -5,6 +5,7 @@ import SobreSistema from './views/SobreSistema.vue'
 import InstalarExtensao from './views/InstalarExtensao.vue'
 import Roadmap from './views/Roadmap.vue'
 import PoliticaPrivacidade from './views/PoliticaPrivacidade.vue'
+import PrivacidadeChatTranslator from './views/PrivacidadeChatTranslator.vue'
 
 const routes = [
   {
@@ -50,6 +51,11 @@ const routes = [
     path: '/privacidade',
     name: 'PoliticaPrivacidade',
     component: PoliticaPrivacidade
+  },
+  {
+    path: '/privacidade/chat-translator',
+    name: 'PrivacidadeChatTranslator',
+    component: PrivacidadeChatTranslator
   }
 ]
 
